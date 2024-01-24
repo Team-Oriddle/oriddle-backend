@@ -1,5 +1,6 @@
 .env
 **/application-*.yml
+gradle.properties
 
 # Compiled class file
 *.class
