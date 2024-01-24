@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.2.0"
 	id("io.spring.dependency-management") version "1.1.4"
+	id("com.google.cloud.tools.jib") version "3.4.0"
 	kotlin("jvm") version "1.9.20"
 	kotlin("plugin.spring") version "1.9.20"
 	kotlin("plugin.jpa") version "1.9.20"
@@ -33,11 +34,33 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	runtimeOnly("com.h2database:h2")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("mysql:mysql-connector-java:8.0.33")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+jib {
+	from {
+		image = "openjdk:17-slim"
+		auth {
+			username = project.findProperty("DOCKER_ID") as String?
+			password = project.findProperty("DOCKER_PASSWORD") as String?
+		}
+	}
+	to {
+		image = "${project.findProperty("DOCKER_ID")}/${project.findProperty("DOCKER_IMAGE_NAME")}"
+		auth {
+			username = project.findProperty("DOCKER_ID") as String?
+			password = project.findProperty("DOCKER_PASSWORD") as String?
+		}
+		tags = setOf("latest")
+	}
+	container {
+		jvmFlags = listOf("-Xms128m", "-Xmx128m")
+	}
 }
 
 tasks.withType<KotlinCompile> {
