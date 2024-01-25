@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  spring_boot:
+    container_name: spring_boot
+    image: ${SPRING_BOOT_IMAGE}
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: ${MYSQL_URL}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+    depends_on:
+      - db
+#      volumes:   프론트랑 합친 후에 볼륨 설정 예정
+
+  db:
+    image: mysql:latest
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  my-db:
