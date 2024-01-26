@@ -1,26 +1,19 @@
 package com.tuk.oriddle.global.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
+import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0L
 
-    @Column(updatable = false)
-    var createdAt: LocalDateTime? = null
+    @CreatedDate
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
-    var updatedAt: LocalDateTime? = null
-
-    @PrePersist
-    fun prePersist() {
-        createdAt = LocalDateTime.now()
-    }
-
-    @PreUpdate
-    fun preUpdate() {
-        updatedAt = LocalDateTime.now()
-    }
+    @LastModifiedDate
+    var updatedAt: LocalDateTime = LocalDateTime.now()
 }
