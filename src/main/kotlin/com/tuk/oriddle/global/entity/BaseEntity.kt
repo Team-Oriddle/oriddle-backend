@@ -10,10 +10,15 @@ abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+        private set
 
     @CreatedDate
-    var createdAt: LocalDateTime = LocalDateTime.now()
+    @Column(nullable = false)
+    lateinit var createdAt: LocalDateTime
+        private set
 
     @LastModifiedDate
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    @Column(nullable = false)
+    lateinit var updatedAt: LocalDateTime
+        private set
 }
