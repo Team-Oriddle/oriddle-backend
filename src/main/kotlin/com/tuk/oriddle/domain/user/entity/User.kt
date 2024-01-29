@@ -2,23 +2,23 @@ package com.tuk.oriddle.domain.user.entity
 
 import com.tuk.oriddle.global.entity.BaseEntity
 import jakarta.persistence.*
-import lombok.*
-
-
 
 @Entity
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-internal class User : BaseEntity() {
 
+class User(
+       email: String,
+       password: String,
+       nickname: String) : BaseEntity(
+) {
     @Column(name = "email", nullable = false)
-    private lateinit var email: String
+    var email: String = email
+        private set
 
     @Column(name = "password", nullable = false)
-    private lateinit var password: String
+    var password: String = password
+        private set
 
     @Column(name = "nickname", nullable = false)
-    private lateinit var nickname: String
+    var nickname: String = nickname
+        private set
 }
