@@ -9,7 +9,6 @@ class Quiz(
     description: String,
     image: String
 ) : BaseEntity() {
-
     @Column(nullable = false, length = 100)
     var title: String = title
         private set
