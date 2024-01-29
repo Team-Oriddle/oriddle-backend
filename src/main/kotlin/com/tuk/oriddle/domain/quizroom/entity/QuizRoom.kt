@@ -5,7 +5,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
 @Entity
-
 class QuizRoom(
         title: String,
         maxParticipant: Integer,

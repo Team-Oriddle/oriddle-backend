@@ -4,7 +4,6 @@ import com.tuk.oriddle.global.entity.BaseEntity
 import jakarta.persistence.*
 
 @Entity
-
 class User(
        email: String,
        password: String,
