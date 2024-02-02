@@ -7,8 +7,8 @@ import jakarta.persistence.*
 
 @Entity
 class Participant(
-       quizRoom: QuizRoom,
-       user: User
+    quizRoom: QuizRoom,
+    user: User
 ) : BaseEntity() {
     @ManyToOne
     @JoinColumn(name = "quiz_room_id", nullable = false)

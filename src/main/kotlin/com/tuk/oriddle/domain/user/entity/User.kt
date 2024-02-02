@@ -5,10 +5,10 @@ import jakarta.persistence.*
 
 @Entity
 class User(
-       email: String,
-       password: String,
-       nickname: String) : BaseEntity(
-) {
+    email: String,
+    password: String,
+    nickname: String
+) : BaseEntity() {
     @Column(name = "email", nullable = false)
     var email: String = email
         private set

@@ -6,9 +6,9 @@ import jakarta.persistence.Entity
 
 @Entity
 class QuizRoom(
-        title: String,
-        maxParticipant: Integer,
-        questionCount: Integer
+    title: String,
+    maxParticipant: Integer,
+    questionCount: Integer
 ) : BaseEntity() {
     @Column(name = "title", nullable = false)
     var title: String = title
