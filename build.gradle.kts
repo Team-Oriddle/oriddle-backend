@@ -34,7 +34,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	// Swagger
-	implementation("org.springdoc:springdoc-openapi-ui:2.3.0")
+	implementation("org.springdoc:springdoc-openapi:2.3.0")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
 	runtimeOnly("com.h2database:h2")
