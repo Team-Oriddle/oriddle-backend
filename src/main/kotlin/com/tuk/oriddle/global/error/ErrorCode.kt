@@ -8,5 +8,8 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
 
     // User
     USER_NOT_FOUND(404, "US0001", "유저를 찾을 수 없습니다."),
+
+    // Quiz
+    QUIZ_NOT_FOUND(404, "QZ0001", "퀴즈를 찾을 수 없습니다."),
     ;
 }
