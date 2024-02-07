@@ -6,7 +6,7 @@ import com.tuk.oriddle.domain.quiz.entity.Quiz
 import java.util.stream.Collectors
 
 
-data class QuizGetInfo(
+data class GetQuizInfo(
         val quizId: Long,
         val title: String,
         val makerName: String,
@@ -16,8 +16,8 @@ data class QuizGetInfo(
         val answerTypes: List<String>
 )
 
-fun toQuizGetInfo(quiz: Quiz, questionSourceTypes: List<QuestionSourceType>, answerTypes: List<AnswerType>): QuizGetInfo {
-    return QuizGetInfo(
+fun toGetQuizInfo(quiz: Quiz, questionSourceTypes: List<QuestionSourceType>, answerTypes: List<AnswerType>): GetQuizInfo {
+    return GetQuizInfo(
             quizId = quiz.id,
             title = quiz.title,
             makerName = quiz.maker.nickname,
