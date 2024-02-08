@@ -22,7 +22,7 @@ class QuizQueryServiceImpl(private val quizRepository: QuizRepository, private v
                 .orElseThrow { QuizNotFoundException() }
         val questions: List<Question> = questionRepository.findByQuizId(quizId)
         val questionSourceTypes: List<QuestionSourceType> = questions
-                        .map { it.questionSourceType }
+                        .map { it.sourceType }
                         .distinct()
         val questionTypes: List<QuestionType> = questions
                 .map { it.type }
