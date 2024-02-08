@@ -3,7 +3,7 @@ package com.tuk.oriddle.domain.quiz.service
 import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.question.entity.QuestionSourceType
 import com.tuk.oriddle.domain.question.entity.QuestionType
-import com.tuk.oriddle.domain.question.repository.QuestionRepository
+import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuizInfo
 import com.tuk.oriddle.domain.quiz.dto.response.toGetQuizInfo
@@ -16,11 +16,11 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
-class QuizService(private val quizRepository: QuizRepository, private val questionRepository: QuestionRepository) {
+class QuizService(private val quizRepository: QuizRepository, private val questionQueryService: QuestionQueryService) {
     fun getQuizById(quizId: Long): GetQuizInfo {
         val quiz: Quiz = quizRepository.findById(quizId)
                 .orElseThrow { QuizNotFoundException() }
-        val questions: List<Question> = questionRepository.findByQuizId(quizId)
+        val questions: List<Question> = questionQueryService.findByQuizId(quizId)
         val questionSourceTypes: List<QuestionSourceType> = questions
                         .map { it.sourceType }
                         .distinct()
