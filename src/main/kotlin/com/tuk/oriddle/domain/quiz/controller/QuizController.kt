@@ -1,7 +1,7 @@
 package com.tuk.oriddle.domain.quiz.controller
 
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
-import com.tuk.oriddle.domain.quiz.dto.response.GetQuizInfo
+import com.tuk.oriddle.domain.quiz.dto.response.QuizInfoResponse
 import com.tuk.oriddle.domain.quiz.service.QuizService
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_GET_INFO_SUCCESS
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_PAGING_GET_SUCCESS
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 class QuizController(private val quizService: QuizService) {
     @GetMapping("/info/{quizId}")
     fun getQuizInfo(@PathVariable quizId: Long): ResponseEntity<ResultResponse> {
-        val quizInfo: GetQuizInfo = quizService.getQuizById(quizId)
+        val quizInfo: QuizInfoResponse = quizService.getQuizById(quizId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_GET_INFO_SUCCESS, quizInfo))
     }
 

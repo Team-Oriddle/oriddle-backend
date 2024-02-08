@@ -5,7 +5,7 @@ import com.tuk.oriddle.domain.question.entity.QuestionSourceType
 import com.tuk.oriddle.domain.question.entity.QuestionType
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
-import com.tuk.oriddle.domain.quiz.dto.response.GetQuizInfo
+import com.tuk.oriddle.domain.quiz.dto.response.QuizInfoResponse
 import com.tuk.oriddle.domain.quiz.dto.response.toGetQuizInfo
 import com.tuk.oriddle.domain.quiz.dto.response.toGetQuizzesWithPaging
 import com.tuk.oriddle.domain.quiz.entity.Quiz
@@ -20,7 +20,7 @@ class QuizService(
     private val quizRepository: QuizRepository,
     private val questionQueryService: QuestionQueryService
 ) {
-    fun getQuizById(quizId: Long): GetQuizInfo {
+    fun getQuizById(quizId: Long): QuizInfoResponse {
         val quiz: Quiz = quizRepository.findById(quizId)
             .orElseThrow { QuizNotFoundException() }
         val questions: List<Question> = questionQueryService.findByQuizId(quizId)
