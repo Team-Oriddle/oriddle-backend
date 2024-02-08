@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/quiz")
 class QuizController(private val quizService: QuizService) {
-
-
     @GetMapping("/info/{quizId}")
     fun getQuizInfo(@PathVariable quizId: Long): ResponseEntity<ResultResponse> {
         val quizInfo: GetQuizInfo = quizService.getQuizById(quizId)
@@ -23,8 +21,10 @@ class QuizController(private val quizService: QuizService) {
     }
 
     @GetMapping("/page/{page}")
-    fun getQuizzes(@PathVariable page: Int,
-                   @RequestParam(defaultValue = "20") pageSize: Int): ResponseEntity<ResultResponse> {
+    fun getQuizzes(
+        @PathVariable page: Int,
+        @RequestParam(defaultValue = "20") pageSize: Int
+    ): ResponseEntity<ResultResponse> {
         val pageReqeust: PageRequest = PageRequest.of(page, pageSize, Sort.by("id").descending());
         val quizzes: List<GetQuiz> = quizService.getQuizzesWithPaging(pageReqeust)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_PAGING_GET_SUCCESS, quizzes))

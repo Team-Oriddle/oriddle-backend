@@ -16,18 +16,21 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
-class QuizService(private val quizRepository: QuizRepository, private val questionQueryService: QuestionQueryService) {
+class QuizService(
+    private val quizRepository: QuizRepository,
+    private val questionQueryService: QuestionQueryService
+) {
     fun getQuizById(quizId: Long): GetQuizInfo {
         val quiz: Quiz = quizRepository.findById(quizId)
-                .orElseThrow { QuizNotFoundException() }
+            .orElseThrow { QuizNotFoundException() }
         val questions: List<Question> = questionQueryService.findByQuizId(quizId)
         val questionSourceTypes: List<QuestionSourceType> = questions
-                        .map { it.sourceType }
-                        .distinct()
+            .map { it.sourceType }
+            .distinct()
         val questionTypes: List<QuestionType> = questions
-                .map { it.type }
-                .distinct()
-        return toGetQuizInfo(quiz,questionSourceTypes,questionTypes)
+            .map { it.type }
+            .distinct()
+        return toGetQuizInfo(quiz, questionSourceTypes, questionTypes)
     }
 
     fun getQuizzesWithPaging(pageReqeust: PageRequest): List<GetQuiz> {
