@@ -1,7 +1,7 @@
 package com.tuk.oriddle.domain.quiz.controller
 
-import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
 import com.tuk.oriddle.domain.quiz.dto.response.QuizInfoResponse
+import com.tuk.oriddle.domain.quiz.dto.response.QuizListResponse
 import com.tuk.oriddle.domain.quiz.service.QuizService
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_GET_INFO_SUCCESS
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_PAGING_GET_SUCCESS
@@ -26,7 +26,7 @@ class QuizController(private val quizService: QuizService) {
         @RequestParam(defaultValue = "20") pageSize: Int
     ): ResponseEntity<ResultResponse> {
         val pageReqeust: PageRequest = PageRequest.of(page, pageSize, Sort.by("id").descending());
-        val quizzes: List<GetQuiz> = quizService.getQuizzesWithPaging(pageReqeust)
+        val quizzes: QuizListResponse = quizService.getQuizzesWithPaging(pageReqeust)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_PAGING_GET_SUCCESS, quizzes))
     }
 }
