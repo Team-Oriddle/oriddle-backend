@@ -1,6 +1,6 @@
 package com.tuk.oriddle.domain.quiz.dto.response
 
-import com.tuk.oriddle.domain.question.entity.AnswerType
+import com.tuk.oriddle.domain.question.entity.QuestionType
 import com.tuk.oriddle.domain.question.entity.QuestionSourceType
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import java.util.stream.Collectors
@@ -16,7 +16,7 @@ data class GetQuizInfo(
         val answerTypes: List<String>
 )
 
-fun toGetQuizInfo(quiz: Quiz, questionSourceTypes: List<QuestionSourceType>, answerTypes: List<AnswerType>): GetQuizInfo {
+fun toGetQuizInfo(quiz: Quiz, questionSourceTypes: List<QuestionSourceType>, questionTypes: List<QuestionType>): GetQuizInfo {
     return GetQuizInfo(
             quizId = quiz.id,
             title = quiz.title,
@@ -27,7 +27,7 @@ fun toGetQuizInfo(quiz: Quiz, questionSourceTypes: List<QuestionSourceType>, ans
                     .stream()
                     .map{it.name}
                     .collect(Collectors.toList()),
-            answerTypes = answerTypes.stream()
+            answerTypes = questionTypes.stream()
                     .map{it.name}
                     .collect(Collectors.toList())
     )

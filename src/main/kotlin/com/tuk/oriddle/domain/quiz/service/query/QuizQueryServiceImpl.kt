@@ -1,7 +1,7 @@
 package com.tuk.oriddle.domain.quiz.service.query
 
 import com.tuk.oriddle.domain.question.entity.Question
-import com.tuk.oriddle.domain.question.entity.AnswerType
+import com.tuk.oriddle.domain.question.entity.QuestionType
 import com.tuk.oriddle.domain.question.entity.QuestionSourceType
 import com.tuk.oriddle.domain.question.repository.QuestionRepository
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
@@ -24,10 +24,10 @@ class QuizQueryServiceImpl(private val quizRepository: QuizRepository, private v
         val questionSourceTypes: List<QuestionSourceType> = questions
                         .map { it.questionSourceType }
                         .distinct()
-        val answerTypes: List<AnswerType> = questions
-                .map { it.answerType }
+        val questionTypes: List<QuestionType> = questions
+                .map { it.type }
                 .distinct()
-        return toGetQuizInfo(quiz,questionSourceTypes,answerTypes)
+        return toGetQuizInfo(quiz,questionSourceTypes,questionTypes)
     }
 
     override fun getQuizzesWithPaging(pageReqeust: PageRequest): List<GetQuiz> {

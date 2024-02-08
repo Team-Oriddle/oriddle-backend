@@ -6,14 +6,14 @@ import jakarta.persistence.*
 
 @Entity
 class Question(
-        number: Long,
-        description: String,
-        source: String? = null,
-        answerType: AnswerType,
-        questionSourceType: QuestionSourceType,
-        timeLimit: Int,
-        score: Int,
-        quiz: Quiz
+    number: Long,
+    description: String,
+    source: String? = null,
+    type: QuestionType,
+    questionSourceType: QuestionSourceType,
+    timeLimit: Int,
+    score: Int,
+    quiz: Quiz
 ) : BaseEntity() {
     @Column(nullable = false)
     var number: Long = number
@@ -29,7 +29,7 @@ class Question(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    var answerType: AnswerType = answerType
+    var type: QuestionType = type
         private set
 
     @Enumerated(EnumType.STRING)
