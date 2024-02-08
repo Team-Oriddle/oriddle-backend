@@ -6,7 +6,6 @@ import com.tuk.oriddle.domain.question.entity.QuestionType
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.quiz.dto.response.GetQuiz
 import com.tuk.oriddle.domain.quiz.dto.response.QuizInfoResponse
-import com.tuk.oriddle.domain.quiz.dto.response.toGetQuizInfo
 import com.tuk.oriddle.domain.quiz.dto.response.toGetQuizzesWithPaging
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.exception.QuizNotFoundException
@@ -30,7 +29,7 @@ class QuizService(
         val questionTypes: List<QuestionType> = questions
             .map { it.type }
             .distinct()
-        return toGetQuizInfo(quiz, questionSourceTypes, questionTypes)
+        return QuizInfoResponse.fromQuiz(quiz, questionSourceTypes, questionTypes)
     }
 
     fun getQuizzesWithPaging(pageReqeust: PageRequest): List<GetQuiz> {
