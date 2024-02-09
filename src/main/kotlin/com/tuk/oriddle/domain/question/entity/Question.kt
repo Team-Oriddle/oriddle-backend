@@ -10,6 +10,7 @@ class Question(
     description: String,
     source: String? = null,
     type: QuestionType,
+    sourceType: QuestionSourceType,
     timeLimit: Int,
     score: Int,
     quiz: Quiz
@@ -29,6 +30,11 @@ class Question(
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     var type: QuestionType = type
+        private set
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    var sourceType: QuestionSourceType = sourceType
         private set
 
     @Column(nullable = false)
