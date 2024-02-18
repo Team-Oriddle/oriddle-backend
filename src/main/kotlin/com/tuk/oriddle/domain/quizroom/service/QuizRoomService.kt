@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class QuizRoomService(
-        private val quizRoomRepository: QuizRoomRepository,
-        private val quizQueryService: QuizQueryService
+    private val quizRoomRepository: QuizRoomRepository,
+    private val quizQueryService: QuizQueryService
 ) {
     fun createQuizRoom(quizRoomCreateRequest: QuizRoomCreateRequest) {
         val quiz: Quiz = quizQueryService.findById(quizRoomCreateRequest.quizId)
