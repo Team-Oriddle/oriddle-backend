@@ -1,6 +1,7 @@
 package com.tuk.oriddle.domain.quizroom.controller
 
-import com.tuk.oriddle.domain.quizroom.dto.QuizRoomCreateRequest
+import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
+import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_ROOM_CREATE_SUCCESS
 import com.tuk.oriddle.global.result.ResultResponse
@@ -17,7 +18,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
     @PostMapping
     fun createQuizRoom(@Valid @RequestBody request: QuizRoomCreateRequest
     ): ResponseEntity<ResultResponse> {
-        quizRoomService.createQuizRoom(request)
-        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS))
+        val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
     }
 }
