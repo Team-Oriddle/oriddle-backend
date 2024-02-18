@@ -1,4 +1,4 @@
-package com.tuk.oriddle.domain.quizroom.dto
+package com.tuk.oriddle.domain.quizroom.dto.request
 
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
