@@ -17,6 +17,6 @@ class QuizRoomService(
         val quiz: Quiz = quizQueryService.findById(quizRoomCreateRequest.quizId)
         val quizRoom: QuizRoom = QuizRoomCreateRequest.of(quiz, quizRoomCreateRequest)
         quizRoomRepository.save(quizRoom)
-        return QuizRoomCreateResponse.of(quizRoom)
+        return QuizRoomCreateResponse.of(quizRoom.id)
     }
 }

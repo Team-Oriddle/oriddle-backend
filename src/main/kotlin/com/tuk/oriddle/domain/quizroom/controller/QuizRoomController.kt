@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/quizRoom")
 class QuizRoomController(private val quizRoomService: QuizRoomService) {
     @PostMapping
-    fun createQuizRoom(@Valid @RequestBody request: QuizRoomCreateRequest
+    fun createQuizRoom(
+        @Valid @RequestBody request: QuizRoomCreateRequest
     ): ResponseEntity<ResultResponse> {
         val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
