@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/quizRoom")
+@RequestMapping("/api/v1/quiz-room")
 class QuizRoomController(private val quizRoomService: QuizRoomService) {
     @PostMapping
     fun createQuizRoom(
