@@ -12,6 +12,10 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
             .orElseThrow{ ParticipantNotFoundException() }
     }
 
+    fun countParticipantsByQuizRoomId(quizRoomId: Long): Int {
+        return participantRepository.countParticipantsByQuizId(quizRoomId)
+    }
+
     fun save(participant: Participant) {
         participantRepository.save(participant)
     }

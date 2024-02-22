@@ -1,7 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.service
 
 import com.tuk.oriddle.domain.participant.entity.Participant
-import com.tuk.oriddle.domain.participant.exception.AlreadyParticipatingException
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
@@ -9,6 +8,7 @@ import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
+import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
 import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
 import com.tuk.oriddle.domain.user.entity.User
@@ -33,19 +33,20 @@ class QuizRoomService(
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId)
             .orElseThrow{ QuizRoomNotFoundException() }
         val user: User = userQueryService.findById(userId)
-//        checkQuizRoomJoinable(quizRoomId, userId) // 참가할 수 있는 상태인지 검증
+        checkQuizRoomJoinable(quizRoom) // 참가할 수 있는 상태인지 검증
         val participant = Participant(quizRoom, user)
         participantQueryService.save(participant)
         return QuizRoomJoinResponse.of(quizRoomId, userId)
     }
 
-//    private fun checkQuizRoomJoinable(quizRoomId: Long, userId: Long) {
-//        checkUserAlreadyParticipating(quizRoomId, userId)
-//    }
+    private fun checkQuizRoomJoinable(quizRoom: QuizRoom) {
+        checkQuizRoomFull(quizRoom)
+    }
 
-//    private fun checkUserAlreadyParticipating(quizRoomId: Long, userId: Long) {
-//        val participant: Participant? = participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId)
-//        if (participant != null)
-//            throw AlreadyParticipatingException()
-//    }
+    private fun checkQuizRoomFull(quizRoom: QuizRoom) {
+        val quizRoomMaxParticipants: Int = quizRoom.maxParticipant.toInt()
+        val participantsCount: Int = participantQueryService.countParticipantsByQuizRoomId(quizRoom.id)
+        if (quizRoomMaxParticipants - participantsCount <= 0)
+            throw QuizRoomFullException()
+    }
 }
