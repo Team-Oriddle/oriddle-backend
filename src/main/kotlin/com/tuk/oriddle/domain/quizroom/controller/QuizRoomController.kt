@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -26,11 +27,11 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
     }
 
-    @PostMapping("/join/{room-id}/{user-id}")
+    @PostMapping("/join/{room-id}")
     fun joinQuizRoom(
         @PathVariable(name = "room-id")
         roomId: Long,
-        @PathVariable(name = "user-id")
+        @RequestParam(name = "user-id")
         userId: Long
     ): ResponseEntity<ResultResponse> {
         val quizRoomJoin: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
