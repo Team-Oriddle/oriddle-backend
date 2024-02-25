@@ -6,5 +6,6 @@ enum class ResultCode(val code: String, val message: String) {
     QUIZ_PAGING_GET_SUCCESS("QZ0002", "퀴즈 페이지 조회 성공"),
 
     // QuizRoom (QR)
-    QUIZ_ROOM_CREATE_SUCCESS("QR0001", "퀴즈방 생성 성공")
+    QUIZ_ROOM_CREATE_SUCCESS("QR0001", "퀴즈방 생성 성공"),
+    QUIZ_ROOM_JOIN_SUCCESS("QR0002", "퀴즈방 참여 성공")
 }

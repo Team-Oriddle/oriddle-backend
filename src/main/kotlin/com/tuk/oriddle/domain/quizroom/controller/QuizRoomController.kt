@@ -2,14 +2,18 @@ package com.tuk.oriddle.domain.quizroom.controller
 
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
+import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
+import com.tuk.oriddle.global.result.ResultCode.QUIZ_ROOM_JOIN_SUCCESS
 import com.tuk.oriddle.global.result.ResultCode.QUIZ_ROOM_CREATE_SUCCESS
 import com.tuk.oriddle.global.result.ResultResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -21,5 +25,16 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
     ): ResponseEntity<ResultResponse> {
         val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
+    }
+
+    @PostMapping("/join/{room-id}")
+    fun joinQuizRoom(
+        @PathVariable(name = "room-id")
+        roomId: Long,
+        @RequestParam(name = "user-id")
+        userId: Long
+    ): ResponseEntity<ResultResponse> {
+        val quizRoomJoin: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, quizRoomJoin))
     }
 }
