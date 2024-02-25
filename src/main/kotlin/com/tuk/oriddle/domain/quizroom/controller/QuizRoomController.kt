@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController
 class QuizRoomController(private val quizRoomService: QuizRoomService) {
     @PostMapping
     fun createQuizRoom(
-        @Valid @RequestBody request: QuizRoomCreateRequest
+        @Valid @RequestBody request: QuizRoomCreateRequest,
+        @RequestParam(name =  "user-id")
+        userId: Long
     ): ResponseEntity<ResultResponse> {
-        val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request)
+        val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
     }
 

@@ -22,10 +22,14 @@ class QuizRoomService(
     private val userQueryService: UserQueryService,
     private val participantQueryService: ParticipantQueryService
 ) {
-    fun createQuizRoom(quizRoomCreateRequest: QuizRoomCreateRequest): QuizRoomCreateResponse {
+    fun createQuizRoom(quizRoomCreateRequest: QuizRoomCreateRequest, userId: Long): QuizRoomCreateResponse {
         val quiz: Quiz = quizQueryService.findById(quizRoomCreateRequest.quizId)
         val quizRoom: QuizRoom = QuizRoomCreateRequest.of(quiz, quizRoomCreateRequest)
+        val user: User = userQueryService.findById(userId)
+        checkQuizRoomJoinable(quizRoom) // 참가할 수 있는 상태인지 검증
+        val participant = Participant(quizRoom, user)
         quizRoomRepository.save(quizRoom)
+        participantQueryService.save(participant)
         return QuizRoomCreateResponse.of(quizRoom.id)
     }
 
