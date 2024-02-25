@@ -1,9 +1,11 @@
 package com.tuk.oriddle.global.error
 
 import com.tuk.oriddle.global.error.exception.BusinessException
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -25,6 +27,16 @@ class GlobalExceptionHandler {
         val response = ErrorResponse.of(errorCode)
         log.warn(e.message)
         return ResponseEntity.status(errorCode.status).body(response)
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    protected fun handleAccessDeniedException(
+        e: AccessDeniedException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse?>? {
+        log.warn("${e.message}: [${request.method}] ${request.requestURI}")
+        val response = ErrorResponse.of(ErrorCode.ACCESS_DENIED)
+        return ResponseEntity(response, HttpStatus.UNAUTHORIZED)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
