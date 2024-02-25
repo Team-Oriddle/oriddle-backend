@@ -27,7 +27,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
     }
 
-    @PostMapping("/join/{room-id}")
+    @PostMapping("/{room-id}/join")
     fun joinQuizRoom(
         @PathVariable(name = "room-id")
         roomId: Long,
