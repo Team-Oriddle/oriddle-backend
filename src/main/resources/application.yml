@@ -1,6 +1,7 @@
 spring:
   profiles.include:
     - db
+    - oauth
   jpa:
     database: mysql
     show-sql: true
