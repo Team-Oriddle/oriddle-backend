@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 
@@ -18,7 +19,9 @@ class SecurityConfig(
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http.exceptionHandling { exceptions ->
+        http
+            .csrf {  csrfConfig: CsrfConfigurer<HttpSecurity> -> csrfConfig.disable() }
+            .exceptionHandling { exceptions ->
             exceptions.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         }.logout { logout ->
             logout.logoutSuccessUrl("/")
