@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.entity
 
+import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.global.entity.BaseEntity
 import jakarta.persistence.*
@@ -22,4 +23,10 @@ class QuizRoom(
     @JoinColumn(name = "quiz_id", nullable = false)
     var quiz: Quiz = quiz
         private set
+
+    @OneToMany(mappedBy = "quizRoom", fetch = FetchType.LAZY)
+    var participants: MutableList<Participant> = mutableListOf()
+        private set
+
+    fun isFull(): Boolean = participants.size >= maxParticipant
 }
