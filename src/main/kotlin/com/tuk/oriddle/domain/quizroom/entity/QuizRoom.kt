@@ -29,4 +29,12 @@ class QuizRoom(
         private set
 
     fun isFull(): Boolean = participants.size >= maxParticipant
+
+    fun getNewPosition(): Int {
+        val positions = participants.map { it.position }.sorted()
+        for (i in 1..positions.size) {
+            if (!positions.contains(i)) return i
+        }
+        return positions.size + 1
+    }
 }

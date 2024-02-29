@@ -10,13 +10,17 @@ class Participant(
     quizRoom: QuizRoom,
     user: User
 ) : BaseEntity() {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_room_id", nullable = false)
     var quizRoom: QuizRoom = quizRoom
         private set
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     var user: User = user
+        private set
+
+    @Column(nullable = false)
+    var position: Int = quizRoom.getNewPosition()
         private set
 }
