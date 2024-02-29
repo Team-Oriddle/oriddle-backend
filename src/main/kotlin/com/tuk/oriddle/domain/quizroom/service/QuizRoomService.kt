@@ -11,6 +11,7 @@ import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
+import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
@@ -47,6 +48,14 @@ class QuizRoomService(
         val participant = Participant(quizRoom, user)
         participantQueryService.save(participant)
         return QuizRoomJoinResponse.of(quizRoomId, userId)
+    }
+
+    @Transactional
+    fun leaveQuizRoom(quizRoomId: Long, userId: Long) {
+        if(!participantQueryService.isUserAlreadyParticipant(quizRoomId, userId)) {
+            throw UserNotInQuizRoomException()
+        }
+        participantQueryService.leaveQuizRoom(quizRoomId, userId)
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
