@@ -39,6 +39,7 @@ class QuizRoomService(
 
     @Transactional
     fun joinQuizRoom(quizRoomId: Long, userId: Long): QuizRoomJoinResponse {
+        // TODO: 쿼리 최적화 필요
         val quizRoom: QuizRoom =
             quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val user: User = userQueryService.findById(userId)
