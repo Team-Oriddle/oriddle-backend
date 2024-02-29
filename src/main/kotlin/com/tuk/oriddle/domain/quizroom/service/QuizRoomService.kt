@@ -23,7 +23,8 @@ class QuizRoomService(
     private val quizRoomRepository: QuizRoomRepository,
     private val quizQueryService: QuizQueryService,
     private val userQueryService: UserQueryService,
-    private val participantQueryService: ParticipantQueryService
+    private val participantQueryService: ParticipantQueryService,
+    private val quizRoomMessageService: QuizRoomMessageService
 ) {
     @Transactional
     fun createQuizRoom(
@@ -35,6 +36,12 @@ class QuizRoomService(
         quizRoomRepository.save(quizRoom)
         val participant = Participant(quizRoom, user)
         participantQueryService.save(participant)
+        quizRoomMessageService.sendQuizRoomJoinMessage(
+            quizRoom.id,
+            user.id,
+            user.nickname,
+            participant.position
+        )
         return QuizRoomCreateResponse.of(quizRoom.id)
     }
 
@@ -47,15 +54,22 @@ class QuizRoomService(
         checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user)
         participantQueryService.save(participant)
+        quizRoomMessageService.sendQuizRoomJoinMessage(
+            quizRoomId,
+            user.id,
+            user.nickname,
+            participant.position
+        )
         return QuizRoomJoinResponse.of(quizRoomId, userId)
     }
 
     @Transactional
     fun leaveQuizRoom(quizRoomId: Long, userId: Long) {
-        if(!participantQueryService.isUserAlreadyParticipant(quizRoomId, userId)) {
+        if (!participantQueryService.isUserAlreadyParticipant(quizRoomId, userId)) {
             throw UserNotInQuizRoomException()
         }
         participantQueryService.leaveQuizRoom(quizRoomId, userId)
+        quizRoomMessageService.sendQuizRoomLeaveMessage(quizRoomId, userId)
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
