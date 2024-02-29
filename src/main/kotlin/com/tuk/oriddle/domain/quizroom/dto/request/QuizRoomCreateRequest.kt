@@ -11,8 +11,6 @@ data class QuizRoomCreateRequest(
     val title: String?,
     @field:NotNull(message = "maxParticipant는 비어 있을 수 없습니다.")
     val maxParticipant: Integer?,
-    @field:NotNull(message = "questionCount는 비어 있을 수 없습니다.")
-    val questionCount: Integer?
 ) {
     companion object {
         fun of(
@@ -23,8 +21,7 @@ data class QuizRoomCreateRequest(
                 QuizRoom(
                     quiz = quiz,
                     title = it.title!!,
-                    maxParticipant = it.maxParticipant!!,
-                    questionCount = it.questionCount!!
+                    maxParticipant = it.maxParticipant!!
                 )
             }
         }
