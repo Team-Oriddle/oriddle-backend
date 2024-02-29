@@ -13,4 +13,8 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
     fun isUserAlreadyParticipant(quizRoomId: Long, userId: Long): Boolean {
         return participantRepository.existsByQuizRoomIdAndUserId(quizRoomId, userId)
     }
+
+    fun leaveQuizRoom(quizRoomId: Long, userId: Long) {
+        participantRepository.deleteByQuizRoomIdAndUserId(quizRoomId, userId)
+    }
 }
