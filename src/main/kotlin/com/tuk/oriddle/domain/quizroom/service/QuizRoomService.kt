@@ -29,7 +29,6 @@ class QuizRoomService(
     ): QuizRoomCreateResponse {
         val quiz: Quiz = quizQueryService.findById(request.quizId)
         val quizRoom = QuizRoom(request.title, request.maxParticipant, quiz)
-        checkJoinQuizRoom(quizRoom)
         val user: User = userQueryService.findById(userId)
         quizRoomRepository.save(quizRoom)
         val participant = Participant(quizRoom, user)
