@@ -4,8 +4,7 @@ import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
-import com.tuk.oriddle.global.result.ResultCode.QUIZ_ROOM_CREATE_SUCCESS
-import com.tuk.oriddle.global.result.ResultCode.QUIZ_ROOM_JOIN_SUCCESS
+import com.tuk.oriddle.global.result.ResultCode.*
 import com.tuk.oriddle.global.result.ResultResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -37,5 +36,16 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         val userId = oauth2User.name.toLong()
         val response: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, response))
+    }
+
+    @Secured("ROLE_USER")
+    @PostMapping("/{room-id}/leave")
+    fun leaveQuizRoom(
+        @PathVariable(name = "room-id") roomId: Long,
+        @AuthenticationPrincipal oauth2User: OAuth2User
+    ): ResponseEntity<ResultResponse> {
+        val userId = oauth2User.name.toLong()
+        quizRoomService.leaveQuizRoom(roomId, userId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_LEAVE_SUCCESS))
     }
 }

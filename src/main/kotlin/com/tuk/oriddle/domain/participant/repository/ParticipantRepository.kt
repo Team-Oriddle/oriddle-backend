@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ParticipantRepository : JpaRepository<Participant, Long> {
     fun existsByQuizRoomIdAndUserId(quizRoomId: Long, userId: Long): Boolean
+    fun deleteByQuizRoomIdAndUserId(quizRoomId: Long, userId: Long)
 }
