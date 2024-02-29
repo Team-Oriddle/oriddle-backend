@@ -24,8 +24,8 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
         val userId = oauth2User.name.toLong()
-        val quizRoom: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request, userId)
-        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
+        val response: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request, userId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, response))
     }
 
     @Secured("ROLE_USER")
@@ -35,7 +35,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
         val userId = oauth2User.name.toLong()
-        val quizRoomJoin: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
-        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, quizRoomJoin))
+        val response: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, response))
     }
 }
