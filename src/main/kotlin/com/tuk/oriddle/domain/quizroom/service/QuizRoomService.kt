@@ -8,6 +8,7 @@ import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
+import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
 import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
@@ -41,14 +42,20 @@ class QuizRoomService(
         val quizRoom: QuizRoom =
             quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val user: User = userQueryService.findById(userId)
-        checkJoinQuizRoom(quizRoom)
+        checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user)
         participantQueryService.save(participant)
         return QuizRoomJoinResponse.of(quizRoomId, userId)
     }
 
-    private fun checkJoinQuizRoom(quizRoom: QuizRoom) {
+    private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
+        checkUserAlreadyParticipant(quizRoom.id, user.id)
         checkQuizRoomFull(quizRoom)
+    }
+
+    private fun checkUserAlreadyParticipant(quizRoomId: Long, userId: Long) {
+        if (participantQueryService.isUserAlreadyParticipant(quizRoomId, userId))
+            throw QuizRoomAlreadyParticipantException()
     }
 
     private fun checkQuizRoomFull(quizRoom: QuizRoom) {
