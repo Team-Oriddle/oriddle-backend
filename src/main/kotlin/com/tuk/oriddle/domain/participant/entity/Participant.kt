@@ -19,4 +19,8 @@ class Participant(
     @JoinColumn(name = "user_id", nullable = false)
     var user: User = user
         private set
+
+    @Column(nullable = false)
+    var position: Int = quizRoom.getNewPosition()
+        private set
 }
