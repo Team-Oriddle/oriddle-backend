@@ -7,7 +7,7 @@ import jakarta.persistence.*
 @Entity
 class QuizRoom(
     title: String,
-    maxParticipant: Integer,
+    maxParticipant: Int,
     quiz: Quiz
 ) : BaseEntity() {
     @Column(name = "title", nullable = false)
@@ -15,7 +15,7 @@ class QuizRoom(
         private set
 
     @Column(name = "max_participant", nullable = false)
-    var maxParticipant: Integer = maxParticipant
+    var maxParticipant: Int = maxParticipant
         private set
 
     @ManyToOne(fetch = FetchType.LAZY)
