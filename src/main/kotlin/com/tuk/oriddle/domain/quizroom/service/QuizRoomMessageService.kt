@@ -19,7 +19,7 @@ class QuizRoomMessageService(
     fun sendQuizRoomLeaveMessage(quizRoomId: Long, userId: Long) {
         messagingTemplate.convertAndSend(
             "/topic/quiz-room/$quizRoomId/leave",
-            LeaveQuizRoomMessage(quizRoomId)
+            LeaveQuizRoomMessage(userId)
         )
     }
 }
