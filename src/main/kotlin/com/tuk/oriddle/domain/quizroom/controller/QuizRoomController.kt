@@ -28,13 +28,13 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, quizRoom))
     }
 
+    @Secured("ROLE_USER")
     @PostMapping("/{room-id}/join")
     fun joinQuizRoom(
-        @PathVariable(name = "room-id")
-        roomId: Long,
-        @RequestParam(name = "user-id")
-        userId: Long
+        @PathVariable(name = "room-id") roomId: Long,
+        @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
+        val userId = oauth2User.name.toLong()
         val quizRoomJoin: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, quizRoomJoin))
     }
