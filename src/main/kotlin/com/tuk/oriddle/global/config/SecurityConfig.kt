@@ -1,5 +1,6 @@
 package com.tuk.oriddle.global.config
 
+import com.tuk.oriddle.global.oauth.CustomAuthenticationSuccessHandler
 import com.tuk.oriddle.global.oauth.CustomOAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,23 +17,25 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 class SecurityConfig(
-    private val customOAuth2UserService: CustomOAuth2UserService
+    private val customOAuth2UserService: CustomOAuth2UserService,
+    private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors(Customizer.withDefaults())
-            .csrf {  csrfConfig: CsrfConfigurer<HttpSecurity> -> csrfConfig.disable() }
+            .csrf { csrfConfig: CsrfConfigurer<HttpSecurity> -> csrfConfig.disable() }
             .exceptionHandling { exceptions ->
-            exceptions.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        }.logout { logout ->
-            logout.logoutSuccessUrl("/")
-        }.oauth2Login { oauth2Login ->
-            oauth2Login
-                .userInfoEndpoint { userInfoEndpoint ->
-                    userInfoEndpoint.userService(customOAuth2UserService)
-                }
-        }
+                exceptions.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            }.logout { logout ->
+                logout.logoutSuccessUrl("/")
+            }.oauth2Login { oauth2Login ->
+                oauth2Login
+                    .userInfoEndpoint { userInfoEndpoint ->
+                        userInfoEndpoint.userService(customOAuth2UserService)
+                    }
+                    .successHandler(customAuthenticationSuccessHandler)
+            }
         return http.build()
     }
 }
