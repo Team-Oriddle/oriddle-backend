@@ -54,7 +54,7 @@ class QuizRoomService(
             user.nickname,
             participant.position
         )
-        return QuizRoomCreateResponse.of(quizRoom.id)
+        return QuizRoomCreateResponse.of(quizRoom.id, participant.position)
     }
 
     @Transactional
@@ -72,7 +72,7 @@ class QuizRoomService(
             user.nickname,
             participant.position
         )
-        return QuizRoomJoinResponse.of(quizRoomId, userId)
+        return QuizRoomJoinResponse.of(quizRoomId, userId, participant.position)
     }
 
     @Transactional
