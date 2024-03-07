@@ -58,4 +58,15 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         quizRoomService.leaveQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_LEAVE_SUCCESS))
     }
+
+    @Secured("ROLE_USER")
+    @PostMapping("/{room-id}/start")
+    fun startQuizRoom(
+        @PathVariable(name = "room-id") roomId: Long,
+        @AuthenticationPrincipal oauth2User: OAuth2User
+    ): ResponseEntity<ResultResponse> {
+        // TODO: 방장만 시작할 수 있도록 변경
+        quizRoomService.startQuizRoom(roomId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_START_SUCCESS))
+    }
 }
