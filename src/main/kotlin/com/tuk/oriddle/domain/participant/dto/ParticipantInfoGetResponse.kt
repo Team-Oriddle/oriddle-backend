@@ -2,7 +2,7 @@ package com.tuk.oriddle.domain.participant.dto
 
 import com.tuk.oriddle.domain.participant.entity.Participant
 
-data class ParticipantGetInfoResponse(
+data class ParticipantInfoGetResponse(
     val userId: Long,
     val position: Int,
     val nickname: String
@@ -10,8 +10,8 @@ data class ParticipantGetInfoResponse(
     companion object {
         fun of(
             participant: Participant
-        ): ParticipantGetInfoResponse {
-            return ParticipantGetInfoResponse(
+        ): ParticipantInfoGetResponse {
+            return ParticipantInfoGetResponse(
                 userId =  participant.user.id,
                 position = participant.position,
                 nickname = participant.user.nickname

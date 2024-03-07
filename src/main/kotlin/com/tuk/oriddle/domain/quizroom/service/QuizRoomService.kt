@@ -1,6 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.service
 
-import com.tuk.oriddle.domain.participant.dto.ParticipantGetInfoResponse
+import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
@@ -31,8 +31,8 @@ class QuizRoomService(
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomGetInfoResponse {
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
-        val participantsInfo: List<ParticipantGetInfoResponse> = participants
-                .stream().map { ParticipantGetInfoResponse.of(it) }
+        val participantsInfo: List<ParticipantInfoGetResponse> = participants
+                .stream().map { ParticipantInfoGetResponse.of(it) }
                 .toList()
         return QuizRoomGetInfoResponse.of(quizRoom, participantsInfo)
     }
