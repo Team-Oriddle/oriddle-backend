@@ -2,6 +2,7 @@ package com.tuk.oriddle.domain.quizroom.service
 
 import com.tuk.oriddle.domain.quizroom.dto.message.JoinQuizRoomMessage
 import com.tuk.oriddle.domain.quizroom.dto.message.LeaveQuizRoomMessage
+import com.tuk.oriddle.domain.quizroom.dto.message.QuestionMessage
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 
@@ -21,5 +22,9 @@ class QuizRoomMessageService(
             "/topic/quiz-room/$quizRoomId/leave",
             LeaveQuizRoomMessage(userId)
         )
+    }
+
+    fun sendQuestionMessage(quizRoomId: Long, questionMessage: QuestionMessage) {
+        messagingTemplate.convertAndSend("/topic/quiz-room/$quizRoomId/question", questionMessage)
     }
 }
