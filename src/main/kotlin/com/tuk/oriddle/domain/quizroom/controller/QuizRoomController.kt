@@ -2,6 +2,7 @@ package com.tuk.oriddle.domain.quizroom.controller
 
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
+import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
 import com.tuk.oriddle.global.result.ResultCode.*
@@ -16,6 +17,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/quiz-room")
 class QuizRoomController(private val quizRoomService: QuizRoomService) {
+    @Secured("ROLE_USER")
+    @GetMapping("/{room-id}")
+    fun getQuizRoomInfo(
+        @PathVariable(name =  "room-id") roomId: Long
+    ): ResponseEntity<ResultResponse> {
+        val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId)
+        return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_GET_INFO_SUCCESS, response))
+    }
+
     @Secured("ROLE_USER")
     @PostMapping
     fun createQuizRoom(

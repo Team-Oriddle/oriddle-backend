@@ -17,4 +17,8 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
     fun leaveQuizRoom(quizRoomId: Long, userId: Long) {
         participantRepository.deleteByQuizRoomIdAndUserId(quizRoomId, userId)
     }
+
+    fun findByQuizRoomId(roomId: Long): List<Participant> {
+        return participantRepository.findByQuizRoomId(roomId)
+    }
 }
