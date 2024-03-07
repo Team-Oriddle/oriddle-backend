@@ -29,3 +29,7 @@ springdoc:
 
 frontend:
   base-url: http://localhost:3000
+
+config:
+  quiz-room:
+    start-wait-time: 5
