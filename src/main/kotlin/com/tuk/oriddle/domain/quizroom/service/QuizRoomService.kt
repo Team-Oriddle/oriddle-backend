@@ -17,6 +17,7 @@ import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
+import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomScheduler
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
 import jakarta.transaction.Transactional
@@ -31,7 +32,8 @@ class QuizRoomService(
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomQueryService: QuizRoomQueryService,
     private val questionQueryService: QuestionQueryService,
-    private val quizRoomRedisService: QuizRoomRedisService
+    private val quizRoomRedisService: QuizRoomRedisService,
+    private val quizRoomScheduler: QuizRoomScheduler
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
@@ -98,9 +100,8 @@ class QuizRoomService(
         quizRoomRedisService.saveQuizStatus(quizRoomId, quizId, questionCount)
         quizRoomRedisService.saveQuizParticipants(quizRoomId, quizRoom.participants)
         quizRoomRedisService.saveQuestionsAndAnswers(quizRoomId, questions)
-
-        // TODO: 클라이언트들에게 퀴즈 시작 메시지 보내기
-        // TODO: 스케줄러로 5초 뒤에 문제 공개 메시지를 보내는 기능 구현하기
+        quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
+        quizRoomScheduler.scheduleQuestionPublish(quizRoomId)
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
