@@ -2,7 +2,7 @@ package com.tuk.oriddle.domain.quizroom.controller
 
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
-import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomGetInfoResponse
+import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
 import com.tuk.oriddle.global.result.ResultCode.*
@@ -22,7 +22,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
     fun getQuizRoomInfo(
         @PathVariable(name =  "room-id") roomId: Long
     ): ResponseEntity<ResultResponse> {
-        val response: QuizRoomGetInfoResponse = quizRoomService.getQuizRoomInfo(roomId)
+        val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_GET_INFO_SUCCESS, response))
     }
 

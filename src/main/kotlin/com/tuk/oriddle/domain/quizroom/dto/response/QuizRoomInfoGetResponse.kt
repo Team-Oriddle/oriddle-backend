@@ -3,7 +3,7 @@ package com.tuk.oriddle.domain.quizroom.dto.response
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 
-data class QuizRoomGetInfoResponse(
+data class QuizRoomInfoGetResponse(
     val roomTitle: String,
     val quizTitle: String,
     val maxParticipant: Int,
@@ -13,8 +13,8 @@ data class QuizRoomGetInfoResponse(
         fun of(
             quizRoom: QuizRoom,
             participants: List<ParticipantInfoGetResponse>
-        ): QuizRoomGetInfoResponse {
-            return QuizRoomGetInfoResponse(
+        ): QuizRoomInfoGetResponse {
+            return QuizRoomInfoGetResponse(
                 roomTitle = quizRoom.title,
                 quizTitle = quizRoom.quiz.title,
                 maxParticipant = quizRoom.maxParticipant,

@@ -7,7 +7,7 @@ import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
-import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomGetInfoResponse
+import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
@@ -28,13 +28,13 @@ class QuizRoomService(
     private val participantQueryService: ParticipantQueryService,
     private val quizRoomMessageService: QuizRoomMessageService
 ) {
-    fun getQuizRoomInfo(quizRoomId: Long): QuizRoomGetInfoResponse {
+    fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
         val participantsInfo: List<ParticipantInfoGetResponse> = participants
                 .stream().map { ParticipantInfoGetResponse.of(it) }
                 .toList()
-        return QuizRoomGetInfoResponse.of(quizRoom, participantsInfo)
+        return QuizRoomInfoGetResponse.of(quizRoom, participantsInfo)
     }
 
 
