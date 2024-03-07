@@ -26,7 +26,8 @@ class QuizRoomService(
     private val quizQueryService: QuizQueryService,
     private val userQueryService: UserQueryService,
     private val participantQueryService: ParticipantQueryService,
-    private val quizRoomMessageService: QuizRoomMessageService
+    private val quizRoomMessageService: QuizRoomMessageService,
+    private val quizRoomQueryService: QuizRoomQueryService
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
@@ -60,8 +61,7 @@ class QuizRoomService(
     @Transactional
     fun joinQuizRoom(quizRoomId: Long, userId: Long): QuizRoomJoinResponse {
         // TODO: 쿼리 최적화 필요
-        val quizRoom: QuizRoom =
-            quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
+        val quizRoom = quizRoomQueryService.findById(quizRoomId)
         val user: User = userQueryService.findById(userId)
         checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user)
