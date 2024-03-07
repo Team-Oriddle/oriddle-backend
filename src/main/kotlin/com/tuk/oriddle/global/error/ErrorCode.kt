@@ -9,9 +9,10 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
     // Quiz (QZ)
     QUIZ_NOT_FOUND(400, "QZ0001", "퀴즈를 찾을 수 없음"),
 
-    // Quiz (QR)
+    // QuizRoom (QR)
     QUIZ_ROOM_NOT_FOUND(400, "QR0001", "퀴즈방을 찾을 수 없음"),
     QUIZ_ROOM_IS_FULL(400, "QR0002", "퀴즈방이 꽉 차 있음"),
+    QUIZ_STATUS_NOT_FOUND_IN_REDIS(400, "QR0003", "퀴즈 진행 상태가 Redis에 없음"),
 
     // User (US)
     USER_NOT_FOUND(400,"US0001","유저를 찾을 수 없음"),
