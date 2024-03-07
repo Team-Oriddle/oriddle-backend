@@ -61,4 +61,8 @@ class Question(
         }
         return null
     }
+
+    fun getAnswerSet(): MutableSet<String> {
+        return answers.map { it.content }.toMutableSet()
+    }
 }
