@@ -15,10 +15,13 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
     QUIZ_STATUS_NOT_FOUND_IN_REDIS(400, "QR0003", "퀴즈 진행 상태가 Redis에 없음"),
 
     // User (US)
-    USER_NOT_FOUND(400,"US0001","유저를 찾을 수 없음"),
+    USER_NOT_FOUND(400, "US0001", "유저를 찾을 수 없음"),
 
     // Participant (PC)
-    PARTICIPANT_NOT_FOUND(400,"PC0001","참가자를 찾을 수 없음"),
+    PARTICIPANT_NOT_FOUND(400, "PC0001", "참가자를 찾을 수 없음"),
     QUIZ_ROOM_ALREADY_PARTICIPANT(400, "PC0002", "이미 퀴즈방에 참가중"),
     USER_NOT_IN_QUIZ_ROOM(400, "PC0003", "사용자가 퀴즈방에 없음"),
+
+    // Question (QS)
+    QUESTION_NOT_FOUND_IN_REDIS(400, "QU0001", "질문이 Redis에 없음"),
 }

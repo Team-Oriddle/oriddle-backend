@@ -6,6 +6,7 @@ import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.quizroom.dto.redis.QuestionRedisDto
 import com.tuk.oriddle.domain.quizroom.dto.redis.QuizStatusRedisDto
 import com.tuk.oriddle.domain.quizroom.dto.redis.UserRedisDto
+import com.tuk.oriddle.domain.quizroom.exception.QuestionNotFoundInRedisException
 import com.tuk.oriddle.domain.quizroom.exception.QuizStatusNotFoundInRedisException
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
@@ -45,6 +46,12 @@ class QuizRoomRedisService(
     private fun saveAnswer(quizRoomId: Long, number: Long, answers: MutableSet<String>) {
         val key = "qr:$quizRoomId:answer:$number"
         redisTemplate.opsForValue().set(key, answers)
+    }
+
+    fun getQuestion(quizRoomId: Long, number: Long): QuestionRedisDto {
+        val key = "qr:$quizRoomId:question:$number"
+        val value = redisTemplate.opsForValue().get(key) ?: throw QuestionNotFoundInRedisException()
+        return objectMapper.convertValue(value, QuestionRedisDto::class.java)
     }
 
     fun saveQuizParticipants(quizRoomId: Long, participants: MutableList<Participant>) {
