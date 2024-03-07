@@ -1,8 +1,8 @@
 package com.tuk.oriddle.global.config
 
 import com.tuk.oriddle.global.oauth.CustomAuthenticationSuccessHandler
-import com.tuk.oriddle.global.oauth.CustomLogoutSuccessHandler
 import com.tuk.oriddle.global.oauth.CustomOAuth2UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -20,7 +20,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint
 class SecurityConfig(
     private val customOAuth2UserService: CustomOAuth2UserService,
     private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler,
-    private val customLogoutSuccessHandler: CustomLogoutSuccessHandler
+    @Value("\${frontend.base-url}")
+    private val logoutSuccessUrl: String
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -32,7 +33,8 @@ class SecurityConfig(
             }.logout { logout ->
                 logout
                     .logoutUrl("/api/v1/logout")
-                    .logoutSuccessHandler(customLogoutSuccessHandler)
+                    .invalidateHttpSession(true)
+                    .logoutSuccessUrl(logoutSuccessUrl)
             }.oauth2Login { oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint { userInfoEndpoint ->
