@@ -7,18 +7,18 @@ data class QuizRoomGetInfoResponse(
     val roomTitle: String,
     val quizTitle: String,
     val maxParticipant: Int,
-    val participators: List<ParticipantInfoGetResponse>
+    val participants: List<ParticipantInfoGetResponse>
 ) {
     companion object {
         fun of(
             quizRoom: QuizRoom,
-            participators: List<ParticipantInfoGetResponse>
+            participants: List<ParticipantInfoGetResponse>
         ): QuizRoomGetInfoResponse {
             return QuizRoomGetInfoResponse(
                 roomTitle = quizRoom.title,
                 quizTitle = quizRoom.quiz.title,
                 maxParticipant = quizRoom.maxParticipant,
-                participators = participators
+                participants = participants
             )
         }
     }
