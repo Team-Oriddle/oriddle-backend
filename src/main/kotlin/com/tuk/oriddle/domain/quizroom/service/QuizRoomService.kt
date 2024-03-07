@@ -43,7 +43,7 @@ class QuizRoomService(
         request: QuizRoomCreateRequest, userId: Long
     ): QuizRoomCreateResponse {
         val quiz: Quiz = quizQueryService.findById(request.quizId)
-        val quizRoom = QuizRoom(request.title, request.maxParticipant, quiz)
+        val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
         quizRoomRepository.save(quizRoom)
         val participant = Participant(quizRoom, user)
