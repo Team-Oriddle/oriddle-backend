@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.question.entity
 
+import com.tuk.oriddle.domain.answer.entity.Answer
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.global.entity.BaseEntity
 import jakarta.persistence.*
@@ -49,4 +50,19 @@ class Question(
     @JoinColumn(name = "quiz_id", nullable = false)
     var quiz: Quiz = quiz
         private set
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    var answers: MutableList<Answer> = mutableListOf()
+        private set
+
+    fun getMainAnswerContent(): String? {
+        for (answer in answers) {
+            if (answer.isMainAnswer) return answer.content
+        }
+        return null
+    }
+
+    fun getAnswerSet(): MutableSet<String> {
+        return answers.map { it.content }.toMutableSet()
+    }
 }

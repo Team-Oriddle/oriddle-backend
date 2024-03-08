@@ -3,6 +3,8 @@ package com.tuk.oriddle.domain.quizroom.service
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
+import com.tuk.oriddle.domain.question.entity.Question
+import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
@@ -15,6 +17,7 @@ import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
+import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomScheduler
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
 import jakarta.transaction.Transactional
@@ -26,7 +29,11 @@ class QuizRoomService(
     private val quizQueryService: QuizQueryService,
     private val userQueryService: UserQueryService,
     private val participantQueryService: ParticipantQueryService,
-    private val quizRoomMessageService: QuizRoomMessageService
+    private val quizRoomMessageService: QuizRoomMessageService,
+    private val quizRoomQueryService: QuizRoomQueryService,
+    private val questionQueryService: QuestionQueryService,
+    private val quizRoomRedisService: QuizRoomRedisService,
+    private val quizRoomScheduler: QuizRoomScheduler
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
         val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
@@ -43,7 +50,7 @@ class QuizRoomService(
         request: QuizRoomCreateRequest, userId: Long
     ): QuizRoomCreateResponse {
         val quiz: Quiz = quizQueryService.findById(request.quizId)
-        val quizRoom = QuizRoom(request.title, request.maxParticipant, quiz)
+        val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
         quizRoomRepository.save(quizRoom)
         val participant = Participant(quizRoom, user)
@@ -60,8 +67,7 @@ class QuizRoomService(
     @Transactional
     fun joinQuizRoom(quizRoomId: Long, userId: Long): QuizRoomJoinResponse {
         // TODO: 쿼리 최적화 필요
-        val quizRoom: QuizRoom =
-            quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
+        val quizRoom = quizRoomQueryService.findById(quizRoomId)
         val user: User = userQueryService.findById(userId)
         checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user)
@@ -82,6 +88,20 @@ class QuizRoomService(
         }
         participantQueryService.leaveQuizRoom(quizRoomId, userId)
         quizRoomMessageService.sendQuizRoomLeaveMessage(quizRoomId, userId)
+    }
+
+    @Transactional
+    fun startQuizRoom(quizRoomId: Long) {
+        // TODO: 쿼리 최적화 하기
+        val quizRoom = quizRoomQueryService.findById(quizRoomId)
+        val quizId = quizRoom.quiz.id
+        val questions = questionQueryService.findByQuizId(quizId) as MutableList<Question>
+        val questionCount = questions.size.toLong()
+        quizRoomRedisService.saveQuizStatus(quizRoomId, quizId, questionCount)
+        quizRoomRedisService.saveQuizParticipants(quizRoomId, quizRoom.participants)
+        quizRoomRedisService.saveQuestionsAndAnswers(quizRoomId, questions)
+        quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
+        quizRoomScheduler.scheduleQuestionPublish(quizRoomId)
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
