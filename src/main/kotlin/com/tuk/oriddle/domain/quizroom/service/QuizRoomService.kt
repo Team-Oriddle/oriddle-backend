@@ -6,12 +6,10 @@ import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.participant.exception.ParticipantNotHostException
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
-import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
-import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
@@ -34,12 +32,6 @@ class QuizRoomService(
     private val participantQueryService: ParticipantQueryService,
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomQueryService: QuizRoomQueryService,
-    private val questionQueryService: QuestionQueryService,
-    private val quizRoomRedisService: QuizRoomRedisService,
-    private val quizRoomScheduler: QuizRoomScheduler,
-    private val answerRedisService: AnswerRedisService,
-    private val questionRedisService: QuestionRedisService,
-    private val participantRedisService: ParticipantRedisService
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
         val quizRoom: QuizRoom = quizRoomQueryService.findById(quizRoomId)
@@ -49,7 +41,6 @@ class QuizRoomService(
             .toList()
         return QuizRoomInfoGetResponse.of(quizRoom, participantsInfo)
     }
-
 
     @Transactional
     fun createQuizRoom(
@@ -94,41 +85,6 @@ class QuizRoomService(
         }
         participantQueryService.leaveQuizRoom(quizRoomId, userId)
         quizRoomMessageService.sendQuizRoomLeaveMessage(quizRoomId, userId)
-    }
-
-    @Transactional
-    fun startQuizRoom(quizRoomId: Long, userId: Long) {
-        val participant: Participant = participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId)
-        if (!participant.isHost) {
-            throw ParticipantNotHostException()
-        }
-        // TODO: 쿼리 최적화 하기
-        val quizRoom = quizRoomQueryService.findById(quizRoomId)
-        val questions = questionQueryService.findByQuizId(quizRoom.quiz.id) as MutableList<Question>
-        val questionCount = questions.size.toLong()
-        quizRoomRedisService.saveQuizStatus(quizRoomId, questionCount)
-        participantRedisService.saveParticipants(quizRoomId, quizRoom.participants)
-        for (question in questions) {
-            answerRedisService.saveAnswers(quizRoomId, question.number, question.getAnswerSet())
-            questionRedisService.saveQuestion(quizRoomId, question.number, question)
-        }
-        quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
-        quizRoomScheduler.scheduleQuestionPublish(quizRoomId)
-    }
-
-    fun checkAnswer(quizRoomId: Long, answerMessage: CheckAnswerMessage, userId: Long) {
-        val number = quizRoomRedisService.getQuizStatus(quizRoomId).currentQuestionNumber
-        val score = questionRedisService.getQuestion(quizRoomId, number).score
-        val isAnswerCorrect = answerRedisService.isAnswerCorrect(answerMessage, quizRoomId, number)
-        if (isAnswerCorrect) {
-            quizRoomMessageService.sendAnswerCorrectMessage(
-                quizRoomId,
-                userId,
-                answerMessage,
-                score
-            )
-            // TODO: 정답 이후 다음 문제로 넘어가는 로직 구현하기
-        }
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {

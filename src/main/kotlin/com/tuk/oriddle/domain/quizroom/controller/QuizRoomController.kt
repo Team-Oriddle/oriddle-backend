@@ -4,6 +4,7 @@ import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
+import com.tuk.oriddle.domain.quizroom.service.QuizRoomProgressService
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
 import com.tuk.oriddle.global.result.ResultCode.*
 import com.tuk.oriddle.global.result.ResultResponse
@@ -16,11 +17,14 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/quiz-room")
-class QuizRoomController(private val quizRoomService: QuizRoomService) {
+class QuizRoomController(
+    private val quizRoomService: QuizRoomService,
+    private val quizRoomProgressService: QuizRoomProgressService
+) {
     @Secured("ROLE_USER")
     @GetMapping("/{room-id}")
     fun getQuizRoomInfo(
-        @PathVariable(name =  "room-id") roomId: Long
+        @PathVariable(name = "room-id") roomId: Long
     ): ResponseEntity<ResultResponse> {
         val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_GET_INFO_SUCCESS, response))
@@ -32,6 +36,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @Valid @RequestBody request: QuizRoomCreateRequest,
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
+        // TODO: 인증 정보 가져오는 로직 수정
         val userId = oauth2User.name.toLong()
         val response: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, response))
@@ -43,6 +48,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @PathVariable(name = "room-id") roomId: Long,
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
+        // TODO: 인증 정보 가져오는 로직 수정
         val userId = oauth2User.name.toLong()
         val response: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, response))
@@ -54,6 +60,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @PathVariable(name = "room-id") roomId: Long,
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
+        // TODO: 인증 정보 가져오는 로직 수정
         val userId = oauth2User.name.toLong()
         quizRoomService.leaveQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_LEAVE_SUCCESS))
@@ -66,7 +73,7 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
         val userId = oauth2User.name.toLong()
-        quizRoomService.startQuizRoom(roomId, userId)
+        quizRoomProgressService.startQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_START_SUCCESS))
     }
 }
