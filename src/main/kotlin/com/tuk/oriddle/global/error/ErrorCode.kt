@@ -24,4 +24,7 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
 
     // Question (QS)
     QUESTION_NOT_FOUND_IN_REDIS(400, "QU0001", "질문이 Redis에 없음"),
+
+    // Answer (AN)
+    ANSWER_NOT_FOUND_IN_REDIS(400, "AN0001", "답변이 Redis에 없음"),
 }
