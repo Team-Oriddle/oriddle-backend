@@ -16,4 +16,8 @@ class User(
     @Column(name = "nickname", nullable = false)
     var nickname: String = nickname
         private set
+
+    fun updateNickname(updatedNickname: String) {
+        this.nickname = updatedNickname
+    }
 }
