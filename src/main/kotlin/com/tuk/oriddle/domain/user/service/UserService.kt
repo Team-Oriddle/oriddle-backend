@@ -26,6 +26,7 @@ class UserService(private val userQueryService: UserQueryService) {
         return UserNicknameUpdateResponse.of(user)
     }
 
+    // TODO: 닉네임 랜덤 생성 로직 분리
     private fun generateRandomNickname(duck: String, numberLength: Int): String {
         val randomModifier = Modifier.getRandomModifier()
         val randomNumber = (0 until 10.0.pow(numberLength).toInt()).random().toString().padStart(numberLength, '0')
