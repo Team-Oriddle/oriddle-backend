@@ -12,9 +12,11 @@ class UserQueryService(private val userRepository: UserRepository) {
             .orElseThrow { UserNotFoundException() }
     }
 
-    fun findOrCreateUserByEmail(email: String): User {
-        // TODO: nickname 자동 생성 로직 추가하기
-        return userRepository.findByEmail(email)?.let { it }
-            ?: userRepository.save(User(email = email, nickname = "기본 이름"))
+    fun findByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
+    }
+
+    fun save(user: User): User {
+        return userRepository.save(user)
     }
 }
