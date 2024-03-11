@@ -14,4 +14,5 @@ enum class ResultCode(val code: String, val message: String) {
 
     // User (US)
     USER_GET_SUCCESS("US0001", "유저 정보 조회 성공"),
+    USER_NICKNAME_UPDATE_SUCCESS("US0002","유저 닉네임 수정 성공")
 }
