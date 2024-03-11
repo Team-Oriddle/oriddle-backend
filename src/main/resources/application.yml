@@ -32,4 +32,5 @@ frontend:
 
 config:
   quiz-room:
+    default-wait-time: 5
     start-wait-time: 5
