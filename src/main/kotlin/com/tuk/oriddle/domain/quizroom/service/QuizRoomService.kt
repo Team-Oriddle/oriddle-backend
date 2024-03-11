@@ -19,9 +19,7 @@ import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
-import com.tuk.oriddle.domain.quizroom.exception.QuizRoomNotFoundException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
-import com.tuk.oriddle.domain.quizroom.repository.QuizRoomRepository
 import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomScheduler
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service
 // TODO: 서비스 분리 및 리팩토링 필요
 @Service
 class QuizRoomService(
-    private val quizRoomRepository: QuizRoomRepository,
     private val quizQueryService: QuizQueryService,
     private val userQueryService: UserQueryService,
     private val participantQueryService: ParticipantQueryService,
@@ -45,8 +42,7 @@ class QuizRoomService(
     private val participantRedisService: ParticipantRedisService
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
-        val quizRoom: QuizRoom =
-            quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
+        val quizRoom: QuizRoom = quizRoomQueryService.findById(quizRoomId)
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
         val participantsInfo: List<ParticipantInfoGetResponse> = participants
             .stream().map { ParticipantInfoGetResponse.of(it) }
@@ -62,7 +58,7 @@ class QuizRoomService(
         val quiz: Quiz = quizQueryService.findById(request.quizId)
         val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
-        quizRoomRepository.save(quizRoom)
+        quizRoomQueryService.save(quizRoom)
         val participant = Participant(quizRoom, user, true)
         participantQueryService.save(participant)
         quizRoomMessageService.sendQuizRoomJoinMessage(
