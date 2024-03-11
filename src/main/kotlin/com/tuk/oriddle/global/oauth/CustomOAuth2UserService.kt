@@ -14,7 +14,7 @@ class CustomOAuth2UserService(private val userQueryService: UserQueryService) : 
         val oauth2User = super.loadUser(userRequest)
 
         val email = oauth2User.attributes["email"] as String
-        val user = userQueryService.findOrCreateUserByEmail(email)
+        val user = userQueryService.findByEmail(email) ?: userQueryService.createByEmail(email)
 
         val authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
         val attributes = mapOf("userId" to user.id)
