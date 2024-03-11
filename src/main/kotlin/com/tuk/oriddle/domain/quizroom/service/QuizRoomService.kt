@@ -44,11 +44,12 @@ class QuizRoomService(
     private val participantRedisService: ParticipantRedisService
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
-        val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
+        val quizRoom: QuizRoom =
+            quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
         val participantsInfo: List<ParticipantInfoGetResponse> = participants
-                .stream().map { ParticipantInfoGetResponse.of(it) }
-                .toList()
+            .stream().map { ParticipantInfoGetResponse.of(it) }
+            .toList()
         return QuizRoomInfoGetResponse.of(quizRoom, participantsInfo)
     }
 

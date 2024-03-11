@@ -1,8 +1,8 @@
 package com.tuk.oriddle.domain.quizroom.dto.message
 
+import com.tuk.oriddle.domain.question.dto.redis.QuestionRedisDto
 import com.tuk.oriddle.domain.question.entity.QuestionSourceType
 import com.tuk.oriddle.domain.question.entity.QuestionType
-import com.tuk.oriddle.domain.quizroom.dto.redis.QuestionRedisDto
 
 data class QuestionMessage(
     val number: Long,
