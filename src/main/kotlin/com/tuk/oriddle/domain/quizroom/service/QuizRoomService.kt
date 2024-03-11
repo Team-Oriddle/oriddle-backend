@@ -116,6 +116,21 @@ class QuizRoomService(
         quizRoomScheduler.scheduleQuestionPublish(quizRoomId)
     }
 
+    fun checkAnswer(quizRoomId: Long, answerMessage: CheckAnswerMessage, userId: Long) {
+        val number = quizRoomRedisService.getQuizStatus(quizRoomId).currentQuestionNumber
+        val score = questionRedisService.getQuestion(quizRoomId, number).score
+        val isAnswerCorrect = answerRedisService.isAnswerCorrect(answerMessage, quizRoomId, number)
+        if (isAnswerCorrect) {
+            quizRoomMessageService.sendAnswerCorrectMessage(
+                quizRoomId,
+                userId,
+                answerMessage,
+                score
+            )
+            // TODO: 정답 이후 다음 문제로 넘어가는 로직 구현하기
+        }
+    }
+
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
         checkUserAlreadyParticipant(quizRoom.id, user.id)
         checkQuizRoomFull(quizRoom)
