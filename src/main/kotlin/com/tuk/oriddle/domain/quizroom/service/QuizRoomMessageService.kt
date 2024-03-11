@@ -35,4 +35,18 @@ class QuizRoomMessageService(
     fun sendQuestionMessage(quizRoomId: Long, questionMessage: QuestionMessage) {
         messagingTemplate.convertAndSend("/topic/quiz-room/$quizRoomId/question", questionMessage)
     }
+
+    fun sendAnswerCorrectMessage(
+        quizRoomId: Long,
+        userId: Long,
+        answerMessage: CheckAnswerMessage,
+        score: Int
+    ) {
+        val answerCorrectMessage = AnswerCorrectMessage(userId, answerMessage.answer, score)
+        messagingTemplate.convertAndSend(
+            "/topic/quiz-room/$quizRoomId/answer",
+            answerCorrectMessage
+        )
+        // TODO: 다음 문제로 넘어가는 처리 구현
+    }
 }
