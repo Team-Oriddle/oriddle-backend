@@ -1,12 +1,16 @@
 package com.tuk.oriddle.domain.quizroom.service
 
+import com.tuk.oriddle.domain.answer.service.AnswerRedisService
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
+import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
 import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
+import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
+import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
@@ -23,6 +27,7 @@ import com.tuk.oriddle.domain.user.service.UserQueryService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
+// TODO: 서비스 분리 및 리팩토링 필요
 @Service
 class QuizRoomService(
     private val quizRoomRepository: QuizRoomRepository,
@@ -33,14 +38,18 @@ class QuizRoomService(
     private val quizRoomQueryService: QuizRoomQueryService,
     private val questionQueryService: QuestionQueryService,
     private val quizRoomRedisService: QuizRoomRedisService,
-    private val quizRoomScheduler: QuizRoomScheduler
+    private val quizRoomScheduler: QuizRoomScheduler,
+    private val answerRedisService: AnswerRedisService,
+    private val questionRedisService: QuestionRedisService,
+    private val participantRedisService: ParticipantRedisService
 ) {
     fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
-        val quizRoom: QuizRoom = quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
+        val quizRoom: QuizRoom =
+            quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
         val participantsInfo: List<ParticipantInfoGetResponse> = participants
-                .stream().map { ParticipantInfoGetResponse.of(it) }
-                .toList()
+            .stream().map { ParticipantInfoGetResponse.of(it) }
+            .toList()
         return QuizRoomInfoGetResponse.of(quizRoom, participantsInfo)
     }
 
@@ -94,14 +103,32 @@ class QuizRoomService(
     fun startQuizRoom(quizRoomId: Long) {
         // TODO: 쿼리 최적화 하기
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
-        val quizId = quizRoom.quiz.id
-        val questions = questionQueryService.findByQuizId(quizId) as MutableList<Question>
+        val questions = questionQueryService.findByQuizId(quizRoom.quiz.id) as MutableList<Question>
         val questionCount = questions.size.toLong()
-        quizRoomRedisService.saveQuizStatus(quizRoomId, quizId, questionCount)
-        quizRoomRedisService.saveQuizParticipants(quizRoomId, quizRoom.participants)
-        quizRoomRedisService.saveQuestionsAndAnswers(quizRoomId, questions)
+        quizRoomRedisService.saveQuizStatus(quizRoomId, questionCount)
+        println(quizRoom.participants)
+        participantRedisService.saveParticipants(quizRoomId, quizRoom.participants)
+        for (question in questions) {
+            answerRedisService.saveAnswers(quizRoomId, question.number, question.getAnswerSet())
+            questionRedisService.saveQuestion(quizRoomId, question.number, question)
+        }
         quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
         quizRoomScheduler.scheduleQuestionPublish(quizRoomId)
+    }
+
+    fun checkAnswer(quizRoomId: Long, answerMessage: CheckAnswerMessage, userId: Long) {
+        val number = quizRoomRedisService.getQuizStatus(quizRoomId).currentQuestionNumber
+        val score = questionRedisService.getQuestion(quizRoomId, number).score
+        val isAnswerCorrect = answerRedisService.isAnswerCorrect(answerMessage, quizRoomId, number)
+        if (isAnswerCorrect) {
+            quizRoomMessageService.sendAnswerCorrectMessage(
+                quizRoomId,
+                userId,
+                answerMessage,
+                score
+            )
+            // TODO: 정답 이후 다음 문제로 넘어가는 로직 구현하기
+        }
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {

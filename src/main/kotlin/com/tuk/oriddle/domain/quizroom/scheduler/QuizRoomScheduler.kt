@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.scheduler
 
+import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quizroom.dto.message.QuestionMessage
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomMessageService
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomRedisService
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component
 class QuizRoomScheduler(
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomRedisService: QuizRoomRedisService,
+    private val questionRedisService: QuestionRedisService,
     @Value("\${config.quiz-room.start-wait-time}")
     private val startWaitTime: Long
 ) {
@@ -20,9 +22,8 @@ class QuizRoomScheduler(
     fun scheduleQuestionPublish(quizRoomId: Long) {
         Thread.sleep(secToMilliSec(startWaitTime))
         val quizStatusRedisDto = quizRoomRedisService.getQuizStatus(quizRoomId)
-        val quizId = quizStatusRedisDto.quizId
         val currentQuestionNumber = quizStatusRedisDto.currentQuestionNumber
-        val currentQuestionRedisDto = quizRoomRedisService.getQuestion(quizId, currentQuestionNumber)
+        val currentQuestionRedisDto = questionRedisService.getQuestion(quizRoomId, currentQuestionNumber)
         val questionMessage = QuestionMessage.of(currentQuestionRedisDto)
         quizRoomMessageService.sendQuestionMessage(quizRoomId, questionMessage)
         // TODO: 문제 제한시간이 다 되면 메시지를 발송하는 기능 구현하기
