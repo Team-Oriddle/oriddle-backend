@@ -1,6 +1,7 @@
 package com.tuk.oriddle.domain.user.service
 
 import com.tuk.oriddle.domain.user.dto.request.UserNicknameUpdateRequest
+import com.tuk.oriddle.domain.user.dto.response.UserInfoResponse
 import com.tuk.oriddle.domain.user.dto.response.UserNicknameUpdateResponse
 import com.tuk.oriddle.domain.user.entity.Modifier
 import com.tuk.oriddle.domain.user.entity.User
@@ -13,6 +14,11 @@ import kotlin.math.pow
 class UserService(private val userQueryService: UserQueryService) {
     private val randomDigit: Int = 4
     private val characterName: String = "오리"
+    fun getLoginUserInfo(userId: Long): UserInfoResponse {
+        val user = userQueryService.findById(userId)
+        return UserInfoResponse.of(user)
+    }
+
     fun createByEmail(email: String): User {
         val user = User(email = email, nickname = generateRandomNickname(characterName, randomDigit))
         return userQueryService.save(user)

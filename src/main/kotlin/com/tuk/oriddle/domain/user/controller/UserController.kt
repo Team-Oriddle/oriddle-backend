@@ -3,7 +3,6 @@ package com.tuk.oriddle.domain.user.controller
 import com.tuk.oriddle.domain.user.dto.request.UserNicknameUpdateRequest
 import com.tuk.oriddle.domain.user.dto.response.UserInfoResponse
 import com.tuk.oriddle.domain.user.dto.response.UserNicknameUpdateResponse
-import com.tuk.oriddle.domain.user.service.UserQueryService
 import com.tuk.oriddle.domain.user.service.UserService
 import com.tuk.oriddle.global.result.ResultCode
 import com.tuk.oriddle.global.result.ResultResponse
@@ -16,14 +15,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/user")
 class UserController(
-    private val userQueryService: UserQueryService,
     private val userService: UserService) {
     @Secured("ROLE_USER")
     @GetMapping("/info")
     fun getLoginUserInfo(@AuthenticationPrincipal oauth2User: OAuth2User): ResponseEntity<ResultResponse> {
         val userId = oauth2User.attributes["userId"] as Long
-        val user = userQueryService.findById(userId)
-        val userInfoResponse = UserInfoResponse.of(user)
+        val userInfoResponse: UserInfoResponse = userService.getLoginUserInfo(userId)
         return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_GET_SUCCESS, userInfoResponse))
     }
 

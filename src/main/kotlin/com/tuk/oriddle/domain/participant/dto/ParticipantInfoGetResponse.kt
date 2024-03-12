@@ -5,7 +5,8 @@ import com.tuk.oriddle.domain.participant.entity.Participant
 data class ParticipantInfoGetResponse(
     val userId: Long,
     val position: Int,
-    val nickname: String
+    val nickname: String,
+    val isHost: Boolean
 ) {
     companion object {
         fun of(
@@ -14,7 +15,8 @@ data class ParticipantInfoGetResponse(
             return ParticipantInfoGetResponse(
                 userId =  participant.user.id,
                 position = participant.position,
-                nickname = participant.user.nickname
+                nickname = participant.user.nickname,
+                isHost = participant.isHost
             )
         }
     }
