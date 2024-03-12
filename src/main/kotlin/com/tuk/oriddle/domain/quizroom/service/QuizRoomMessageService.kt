@@ -42,6 +42,10 @@ class QuizRoomMessageService(
         sendMessage("time-out", quizRoomId, timeOutMessage)
     }
 
+    fun sendFinishMessage(quizRoomId: Long) {
+        sendMessage("finish", quizRoomId, QuizRoomFinishMessage(quizRoomId))
+    }
+
     private fun sendMessage(topic: String, quizRoomId: Long, message: Any) {
         val destination = "/topic/quiz-room/$quizRoomId/$topic"
         messagingTemplate.convertAndSend(destination, message)
