@@ -4,18 +4,12 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 
 @RedisHash("quizStatus")
-class QuizRoomProgressStatus(
-    quizRoomId: Long,
-    questionCount: Long,
-    isQuestionOpen: Boolean = false,
-    currentQuestionNumber: Long = 1
+data class QuizRoomProgressStatus(
+    @Id val quizRoomId: Long,
+    private val questionCount: Long,
+    val isQuestionOpen: Boolean = false,
+    val currentQuestionNumber: Long = 1
 ) {
-    @Id
-    val quizRoomId: Long = quizRoomId
-    private val questionCount: Long = questionCount
-    val isQuestionOpen: Boolean = isQuestionOpen
-    val currentQuestionNumber: Long = currentQuestionNumber
-
     fun getQuestionOpenStatus(): QuizRoomProgressStatus {
         return QuizRoomProgressStatus(quizRoomId, questionCount, true, currentQuestionNumber)
     }
