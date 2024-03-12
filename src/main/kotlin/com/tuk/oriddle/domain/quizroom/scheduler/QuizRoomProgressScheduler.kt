@@ -60,7 +60,7 @@ class QuizRoomProgressScheduler(
     // TODO: 공통 로직을 다루는 모듈을 만들어서 처리하도록 수정
     private fun progressNextQuestionOrFinishQuiz(quizRoomId: Long, status: QuizRoomProgressStatus) {
         if (status.isLastQuestion()) {
-            // TODO: 퀴즈 종료 로직 구현
+            quizRoomMessageService.sendFinishMessage(quizRoomId)
         } else {
             quizRoomRedisService.saveQuizStatus(status.getNextQuestionStatus())
             scheduleNextQuestionPublish(quizRoomId)
