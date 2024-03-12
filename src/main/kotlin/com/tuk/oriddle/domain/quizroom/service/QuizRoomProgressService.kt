@@ -1,6 +1,8 @@
 package com.tuk.oriddle.domain.quizroom.service
 
 import com.tuk.oriddle.domain.answer.service.AnswerRedisService
+import com.tuk.oriddle.domain.participant.exception.ParticipantNotHostException
+import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
 import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
@@ -20,8 +22,14 @@ class QuizRoomProgressService(
     private val questionRedisService: QuestionRedisService,
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomProgressScheduler: QuizRoomProgressScheduler,
+    private val participantQueryService: ParticipantQueryService
 ) {
-    fun startQuizRoom(quizRoomId: Long) {
+    fun startQuizRoom(quizRoomId: Long, userId: Long) {
+        val isNotHost =
+            !participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId).isHost
+        if (isNotHost) {
+            throw ParticipantNotHostException()
+        }
         initQuizRoomProgressData(quizRoomId)
         quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
         quizRoomProgressScheduler.scheduleStartQuestionPublish(quizRoomId)
