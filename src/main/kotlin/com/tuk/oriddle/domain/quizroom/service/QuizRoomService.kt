@@ -3,6 +3,8 @@ package com.tuk.oriddle.domain.quizroom.service
 import com.tuk.oriddle.domain.answer.service.AnswerRedisService
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
+import com.tuk.oriddle.domain.participant.entity.Role
+import com.tuk.oriddle.domain.participant.exception.ParticipantNotHostException
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
 import com.tuk.oriddle.domain.question.entity.Question
@@ -62,7 +64,7 @@ class QuizRoomService(
         val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
         quizRoomRepository.save(quizRoom)
-        val participant = Participant(quizRoom, user)
+        val participant = Participant(quizRoom, user, Role.HOST)
         participantQueryService.save(participant)
         quizRoomMessageService.sendQuizRoomJoinMessage(
             quizRoom.id,
@@ -79,7 +81,7 @@ class QuizRoomService(
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
         val user: User = userQueryService.findById(userId)
         checkJoinQuizRoom(quizRoom, user)
-        val participant = Participant(quizRoom, user)
+        val participant = Participant(quizRoom, user, Role.PARTICIPANT)
         participantQueryService.save(participant)
         quizRoomMessageService.sendQuizRoomJoinMessage(
             quizRoomId,
@@ -100,7 +102,11 @@ class QuizRoomService(
     }
 
     @Transactional
-    fun startQuizRoom(quizRoomId: Long) {
+    fun startQuizRoom(quizRoomId: Long, userId: Long) {
+        val participant: Participant = participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId)
+        if (participant.role != Role.HOST) {
+            throw ParticipantNotHostException()
+        }
         // TODO: 쿼리 최적화 하기
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
         val questions = questionQueryService.findByQuizId(quizRoom.quiz.id) as MutableList<Question>

@@ -21,6 +21,7 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
     PARTICIPANT_NOT_FOUND(400, "PC0001", "참가자를 찾을 수 없음"),
     QUIZ_ROOM_ALREADY_PARTICIPANT(400, "PC0002", "이미 퀴즈방에 참가중"),
     USER_NOT_IN_QUIZ_ROOM(400, "PC0003", "사용자가 퀴즈방에 없음"),
+    PARTICIPANT_NOT_HOST(400, "PC0004", "참가자가 방장이 아님"),
 
     // Question (QS)
     QUESTION_NOT_FOUND_IN_REDIS(400, "QU0001", "질문이 Redis에 없음"),
