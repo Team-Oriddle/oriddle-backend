@@ -2,6 +2,7 @@ package com.tuk.oriddle.domain.quizroom.scheduler
 
 import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quizroom.dto.message.QuestionMessage
+import com.tuk.oriddle.domain.quizroom.dto.message.QuestionTimeOutMessage
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoomProgressStatus
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomMessageService
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomRedisService
@@ -16,26 +17,24 @@ class QuizRoomProgressScheduler(
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomRedisService: QuizRoomRedisService,
     private val questionRedisService: QuestionRedisService,
-    @Value("\${config.quiz-room.start-wait-time}") private val startWaitTime: Long,
-    @Value("\${config.quiz-room.question-wait-time}") private val questionWaitTime: Long
+    @Value("\${config.quiz-room.start-wait-time}") private val startWaitTime: Int,
+    @Value("\${config.quiz-room.question-wait-time}") private val questionWaitTime: Int
 ) {
     // TODO: 문제 제한시간이 다 되면 메시지를 보내고 상태를 변경하는 로직 추가
     @Async
-    fun scheduleQuizRoomStart(quizRoomId: Long) {
+    fun scheduleStartQuestionPublish(quizRoomId: Long) {
+        Thread.sleep(startWaitTime.toMilliSec())
+        publishQuestion(quizRoomId)
+    }
+
+    @Async
+    fun scheduleNextQuestionPublish(quizRoomId: Long) {
+        Thread.sleep(questionWaitTime.toMilliSec())
+        publishQuestion(quizRoomId)
+    }
+
+    private fun publishQuestion(quizRoomId: Long) {
         val status = quizRoomRedisService.getQuizStatus(quizRoomId)
-        scheduleQuestionPublish(quizRoomId, status, startWaitTime)
-    }
-
-    @Async
-    fun scheduleNextQuestionOpen(quizRoomId: Long, status: QuizRoomProgressStatus) {
-        val nextStatus = status.getNextQuestionStatus()
-        quizRoomRedisService.saveQuizStatus(nextStatus)
-        scheduleQuestionPublish(quizRoomId, nextStatus, questionWaitTime)
-    }
-
-    @Async
-    fun scheduleQuestionPublish(quizRoomId: Long, status: QuizRoomProgressStatus, waitTime: Long) {
-        Thread.sleep(secToMilliSec(waitTime))
         val newQuizRoomProgressStatus = status.getQuestionOpenStatus()
         quizRoomRedisService.saveQuizStatus(newQuizRoomProgressStatus)
         val currentQuestionNumber = newQuizRoomProgressStatus.currentQuestionNumber
@@ -44,7 +43,5 @@ class QuizRoomProgressScheduler(
         quizRoomMessageService.sendQuestionMessage(quizRoomId, questionMessage)
     }
 
-    private fun secToMilliSec(sec: Long): Long {
-        return sec * 1000
-    }
+    private fun Int.toMilliSec() = (this * 1000).toLong()
 }

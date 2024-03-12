@@ -8,7 +8,6 @@ import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoomProgressStatus
 import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomProgressScheduler
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,8 +21,13 @@ class QuizRoomProgressService(
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomProgressScheduler: QuizRoomProgressScheduler,
 ) {
-    @Transactional
     fun startQuizRoom(quizRoomId: Long) {
+        initQuizRoomProgressData(quizRoomId)
+        quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
+        quizRoomProgressScheduler.scheduleStartQuestionPublish(quizRoomId)
+    }
+
+    private fun initQuizRoomProgressData(quizRoomId: Long) {
         // TODO: 쿼리 최적화 하기
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
         val questions = questionQueryService.findByQuizId(quizRoom.quiz.id) as MutableList<Question>
@@ -34,32 +38,28 @@ class QuizRoomProgressService(
             answerRedisService.saveAnswers(quizRoomId, question.number, question.getAnswerSet())
             questionRedisService.saveQuestion(quizRoomId, question.number, question)
         }
-        quizRoomMessageService.sendQuizRoomStartMessage(quizRoomId)
-        quizRoomProgressScheduler.scheduleQuizRoomStart(quizRoomId)
     }
 
-    fun checkAnswer(quizRoomId: Long, answerMessage: CheckAnswerMessage, userId: Long): Boolean {
+    fun checkAnswer(quizRoomId: Long, answer: CheckAnswerMessage, userId: Long) {
         val status = quizRoomRedisService.getQuizStatus(quizRoomId)
-        if (!status.isQuestionOpen) return false
-        val number = status.currentQuestionNumber
-        if (answerRedisService.isAnswerCorrect(answerMessage, quizRoomId, number)) {
-            val score = questionRedisService.getQuestion(quizRoomId, number).score
-            quizRoomMessageService.sendAnswerCorrectMessage(
-                quizRoomId,
-                userId,
-                answerMessage,
-                score
-            )
-            processNextQuestionOrFinishQuiz(quizRoomId, status)
+        if (!status.isQuestionOpen) {
+            return
         }
-        return true
+        val number = status.currentQuestionNumber
+        val isCorrect = answerRedisService.isAnswerCorrect(answer, quizRoomId, number)
+        if (isCorrect) {
+            val score = questionRedisService.getQuestion(quizRoomId, number).score
+            quizRoomMessageService.sendAnswerCorrectMessage(quizRoomId, userId, answer, score)
+            progressNextQuestionOrFinishQuiz(quizRoomId, status)
+        }
     }
 
-    private fun processNextQuestionOrFinishQuiz(quizRoomId: Long, status: QuizRoomProgressStatus) {
+    private fun progressNextQuestionOrFinishQuiz(quizRoomId: Long, status: QuizRoomProgressStatus) {
         if (status.isLastQuestion()) {
             // TODO: 퀴즈 종료 로직 구현
         } else {
-            quizRoomProgressScheduler.scheduleNextQuestionOpen(quizRoomId, status)
+            quizRoomRedisService.saveQuizStatus(status.getNextQuestionStatus())
+            quizRoomProgressScheduler.scheduleNextQuestionPublish(quizRoomId)
         }
     }
 }
