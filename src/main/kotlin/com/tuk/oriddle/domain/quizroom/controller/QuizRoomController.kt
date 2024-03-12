@@ -65,7 +65,6 @@ class QuizRoomController(private val quizRoomService: QuizRoomService) {
         @PathVariable(name = "room-id") roomId: Long,
         @AuthenticationPrincipal oauth2User: OAuth2User
     ): ResponseEntity<ResultResponse> {
-        // TODO: 방장만 시작할 수 있도록 변경
         val userId = oauth2User.name.toLong()
         quizRoomService.startQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_START_SUCCESS))

@@ -111,7 +111,6 @@ class QuizRoomService(
         val questions = questionQueryService.findByQuizId(quizRoom.quiz.id) as MutableList<Question>
         val questionCount = questions.size.toLong()
         quizRoomRedisService.saveQuizStatus(quizRoomId, questionCount)
-        println(quizRoom.participants)
         participantRedisService.saveParticipants(quizRoomId, quizRoom.participants)
         for (question in questions) {
             answerRedisService.saveAnswers(quizRoomId, question.number, question.getAnswerSet())
