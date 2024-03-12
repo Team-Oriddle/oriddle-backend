@@ -2,7 +2,6 @@ package com.tuk.oriddle.domain.quizroom.controller
 
 import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomProgressService
-import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
 import com.tuk.oriddle.global.result.ResultCode.*
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping

@@ -19,7 +19,6 @@ import com.tuk.oriddle.domain.user.service.UserQueryService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
-// TODO: 서비스 분리 및 리팩토링 필요
 @Service
 class QuizRoomService(
     private val quizQueryService: QuizQueryService,
