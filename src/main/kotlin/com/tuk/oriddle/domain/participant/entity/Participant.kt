@@ -8,7 +8,8 @@ import jakarta.persistence.*
 @Entity
 class Participant(
     quizRoom: QuizRoom,
-    user: User
+    user: User,
+    role: Role
 ) : BaseEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_room_id", nullable = false)
@@ -22,5 +23,9 @@ class Participant(
 
     @Column(nullable = false)
     var position: Int = quizRoom.getNewPosition()
+        private set
+
+    @Column(nullable = false)
+    var role: Role = role
         private set
 }
