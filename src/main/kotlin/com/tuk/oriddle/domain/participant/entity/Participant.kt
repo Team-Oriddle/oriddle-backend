@@ -9,7 +9,7 @@ import jakarta.persistence.*
 class Participant(
     quizRoom: QuizRoom,
     user: User,
-    role: Role
+    isHost: Boolean
 ) : BaseEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_room_id", nullable = false)
@@ -26,6 +26,6 @@ class Participant(
         private set
 
     @Column(nullable = false)
-    var role: Role = role
+    var isHost: Boolean = isHost
         private set
 }
