@@ -1,13 +1,9 @@
 package com.tuk.oriddle.domain.quizroom.service
 
-import com.tuk.oriddle.domain.answer.service.AnswerRedisService
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
 import com.tuk.oriddle.domain.participant.exception.ParticipantNotHostException
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
-import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
-import com.tuk.oriddle.domain.question.service.QuestionQueryService
-import com.tuk.oriddle.domain.question.service.QuestionRedisService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
@@ -18,7 +14,6 @@ import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
-import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomScheduler
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
 import jakarta.transaction.Transactional

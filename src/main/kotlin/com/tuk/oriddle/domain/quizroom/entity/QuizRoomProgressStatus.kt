@@ -12,7 +12,7 @@ class QuizRoomProgressStatus(
 ) {
     @Id
     val quizRoomId: Long = quizRoomId
-    val questionCount: Long = questionCount
+    private val questionCount: Long = questionCount
     val isQuestionOpen: Boolean = isQuestionOpen
     val currentQuestionNumber: Long = currentQuestionNumber
 
@@ -24,7 +24,7 @@ class QuizRoomProgressStatus(
         return QuizRoomProgressStatus(quizRoomId, questionCount, false, currentQuestionNumber + 1)
     }
 
-    fun isQuizRoomFinish(): Boolean {
-        return currentQuestionNumber > questionCount
+    fun isLastQuestion(): Boolean {
+        return currentQuestionNumber == questionCount
     }
 }
