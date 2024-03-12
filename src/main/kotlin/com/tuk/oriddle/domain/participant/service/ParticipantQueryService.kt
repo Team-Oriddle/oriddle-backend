@@ -21,4 +21,8 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
     fun findByQuizRoomId(roomId: Long): List<Participant> {
         return participantRepository.findByQuizRoomId(roomId)
     }
+
+    fun findByQuizRoomIdAndUserId(roomId: Long, userId: Long): Participant {
+        return participantRepository.findByQuizRoomIdAndUserId(roomId, userId)
+    }
 }
