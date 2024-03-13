@@ -12,28 +12,19 @@ class QuizRoomMessageService(
     private val startWaitTime: Long
 ) {
     fun sendQuizRoomJoinMessage(quizRoomId: Long, userId: Long, nickname: String, position: Int) {
-        messagingTemplate.convertAndSend(
-            "/topic/quiz-room/$quizRoomId/join",
-            JoinQuizRoomMessage(userId, nickname, position)
-        )
+        sendMessage("join", quizRoomId, JoinQuizRoomMessage(userId, nickname, position))
     }
 
     fun sendQuizRoomLeaveMessage(quizRoomId: Long, userId: Long) {
-        messagingTemplate.convertAndSend(
-            "/topic/quiz-room/$quizRoomId/leave",
-            LeaveQuizRoomMessage(userId)
-        )
+        sendMessage("leave", quizRoomId, LeaveQuizRoomMessage(userId))
     }
 
     fun sendQuizRoomStartMessage(quizRoomId: Long) {
-        messagingTemplate.convertAndSend(
-            "/topic/quiz-room/$quizRoomId/start",
-            StartQuizRoomMessage(startWaitTime)
-        )
+        sendMessage("start", quizRoomId, StartQuizRoomMessage(startWaitTime))
     }
 
     fun sendQuestionMessage(quizRoomId: Long, questionMessage: QuestionMessage) {
-        messagingTemplate.convertAndSend("/topic/quiz-room/$quizRoomId/question", questionMessage)
+        sendMessage("question", quizRoomId, questionMessage)
     }
 
     fun sendAnswerCorrectMessage(
@@ -42,11 +33,21 @@ class QuizRoomMessageService(
         answerMessage: CheckAnswerMessage,
         score: Int
     ) {
-        val answerCorrectMessage = AnswerCorrectMessage(userId, answerMessage.answer, score)
-        messagingTemplate.convertAndSend(
-            "/topic/quiz-room/$quizRoomId/answer",
-            answerCorrectMessage
-        )
         // TODO: 다음 문제로 넘어가는 처리 구현
+        val correctMessage = AnswerCorrectMessage(userId, answerMessage.answer, score)
+        sendMessage("answer", quizRoomId, correctMessage)
+    }
+
+    fun sendTimeOutMessage(quizRoomId: Long, timeOutMessage: QuestionTimeOutMessage) {
+        sendMessage("time-out", quizRoomId, timeOutMessage)
+    }
+
+    fun sendFinishMessage(quizRoomId: Long) {
+        sendMessage("finish", quizRoomId, QuizRoomFinishMessage(quizRoomId))
+    }
+
+    private fun sendMessage(topic: String, quizRoomId: Long, message: Any) {
+        val destination = "/topic/quiz-room/$quizRoomId/$topic"
+        messagingTemplate.convertAndSend(destination, message)
     }
 }

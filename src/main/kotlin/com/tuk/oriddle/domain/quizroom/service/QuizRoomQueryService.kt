@@ -10,4 +10,8 @@ class QuizRoomQueryService(private val quizRoomRepository: QuizRoomRepository) {
     fun findById(quizRoomId: Long): QuizRoom {
         return quizRoomRepository.findById(quizRoomId).orElseThrow { QuizRoomNotFoundException() }
     }
+
+    fun save(quizRoom: QuizRoom) {
+        quizRoomRepository.save(quizRoom)
+    }
 }

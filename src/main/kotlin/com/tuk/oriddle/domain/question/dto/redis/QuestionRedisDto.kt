@@ -16,6 +16,7 @@ data class QuestionRedisDto constructor(
     val source: String?,
     val score: Int,
     val timeLimit: Int,
+    // TODO: Null이 불가능 하도록 수정
     val mainAnswer: String?
 ) {
     companion object {
