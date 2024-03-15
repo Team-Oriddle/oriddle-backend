@@ -7,9 +7,12 @@ import com.tuk.oriddle.domain.participant.service.ParticipantRedisService
 import com.tuk.oriddle.domain.question.entity.Question
 import com.tuk.oriddle.domain.question.service.QuestionQueryService
 import com.tuk.oriddle.domain.question.service.QuestionRedisService
+import com.tuk.oriddle.domain.quizroom.dto.message.ChatReceiveMessage
+import com.tuk.oriddle.domain.quizroom.dto.message.ChatSendMessage
 import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoomProgressStatus
 import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomProgressScheduler
+import com.tuk.oriddle.domain.user.service.UserQueryService
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,7 +25,8 @@ class QuizRoomProgressService(
     private val questionRedisService: QuestionRedisService,
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomProgressScheduler: QuizRoomProgressScheduler,
-    private val participantQueryService: ParticipantQueryService
+    private val participantQueryService: ParticipantQueryService,
+    private val userQueryService: UserQueryService
 ) {
     fun startQuizRoom(quizRoomId: Long, userId: Long) {
         val isNotHost =
@@ -70,5 +74,11 @@ class QuizRoomProgressService(
             quizRoomRedisService.saveQuizStatus(status.getNextQuestionStatus())
             quizRoomProgressScheduler.scheduleNextQuestionPublish(quizRoomId)
         }
+    }
+
+    fun sendChatMessage(quizRoomId: Long, message: ChatReceiveMessage, userId: Long) {
+        val user = userQueryService.findById(userId)
+        val sendMessage = ChatSendMessage(user.nickname, message.content)
+        quizRoomMessageService.sendChatMessage(quizRoomId, sendMessage)
     }
 }

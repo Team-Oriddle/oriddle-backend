@@ -46,6 +46,10 @@ class QuizRoomMessageService(
         sendMessage("finish", quizRoomId, QuizRoomFinishMessage(quizRoomId))
     }
 
+    fun sendChatMessage(quizRoomId: Long, message: ChatSendMessage) {
+        sendMessage("chat", quizRoomId, message)
+    }
+
     private fun sendMessage(topic: String, quizRoomId: Long, message: Any) {
         val destination = "/topic/quiz-room/$quizRoomId/$topic"
         messagingTemplate.convertAndSend(destination, message)
