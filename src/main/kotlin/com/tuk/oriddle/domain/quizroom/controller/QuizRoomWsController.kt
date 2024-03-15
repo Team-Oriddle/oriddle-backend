@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.controller
 
+import com.tuk.oriddle.domain.quizroom.dto.message.ChatReceiveMessage
 import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomProgressService
 import com.tuk.oriddle.global.result.ResultCode.*
@@ -21,4 +22,15 @@ class QuizRoomWsController(private val quizRoomProgressService: QuizRoomProgress
         val userId = (headerAccessor.sessionAttributes?.get("id") as String).toLong()
         quizRoomProgressService.checkAnswer(quizRoomId, message, userId)
     }
+
+    @MessageMapping("quiz-room/{quizRoomId}/chat")
+    fun sendChatMessage(
+            @DestinationVariable("quizRoomId") quizRoomId: Long,
+            @Payload message: ChatReceiveMessage,
+            headerAccessor: SimpMessageHeaderAccessor
+    ) {
+        val userId = (headerAccessor.sessionAttributes?.get("id") as String).toLong()
+        quizRoomProgressService.sendChatMessage(quizRoomId, message, userId)
+    }
+
 }
