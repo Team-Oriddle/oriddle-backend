@@ -34,7 +34,7 @@ class GlobalExceptionHandler {
         e: AccessDeniedException,
         request: HttpServletRequest
     ): ResponseEntity<ErrorResponse?>? {
-        log.warn("${e.message}: [${request.method}] ${request.requestURI}")
+        log.warn("[${request.method}] ${request.requestURI}: ${ErrorCode.ACCESS_DENIED.message}")
         val response = ErrorResponse.of(ErrorCode.ACCESS_DENIED)
         return ResponseEntity(response, HttpStatus.UNAUTHORIZED)
     }
