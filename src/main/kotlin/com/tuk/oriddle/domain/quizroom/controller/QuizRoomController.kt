@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.quizroom.controller
 
+import com.tuk.oriddle.domain.quizroom.controller.doc.QuizRoomApiDoc
 import com.tuk.oriddle.domain.quizroom.dto.request.QuizRoomCreateRequest
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
@@ -19,10 +20,10 @@ import org.springframework.web.bind.annotation.*
 class QuizRoomController(
     private val quizRoomService: QuizRoomService,
     private val quizRoomProgressService: QuizRoomProgressService
-) {
+) : QuizRoomApiDoc {
     @Secured("ROLE_USER")
     @GetMapping("/{room-id}")
-    fun getQuizRoomInfo(
+    override fun getQuizRoomInfo(
         @PathVariable(name = "room-id") roomId: Long
     ): ResponseEntity<ResultResponse> {
         val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId)
@@ -31,7 +32,7 @@ class QuizRoomController(
 
     @Secured("ROLE_USER")
     @PostMapping
-    fun createQuizRoom(
+    override fun createQuizRoom(
         @Valid @RequestBody request: QuizRoomCreateRequest,
         @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
@@ -41,7 +42,7 @@ class QuizRoomController(
 
     @Secured("ROLE_USER")
     @PostMapping("/{room-id}/join")
-    fun joinQuizRoom(
+    override fun joinQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
         @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
@@ -51,7 +52,7 @@ class QuizRoomController(
 
     @Secured("ROLE_USER")
     @PostMapping("/{room-id}/leave")
-    fun leaveQuizRoom(
+    override fun leaveQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
         @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
@@ -61,7 +62,7 @@ class QuizRoomController(
 
     @Secured("ROLE_USER")
     @PostMapping("/{room-id}/start")
-    fun startQuizRoom(
+    override fun startQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
         @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
