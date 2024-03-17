@@ -18,5 +18,4 @@ enum class Modifier(val value: String) {
             return values().random()
         }
     }
-
 }

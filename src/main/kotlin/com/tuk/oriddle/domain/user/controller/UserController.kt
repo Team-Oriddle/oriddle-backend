@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/user")
 class UserController(
-    private val userService: UserService) {
+    private val userService: UserService
+) {
     @Secured("ROLE_USER")
     @GetMapping("/info")
     fun getLoginUserInfo(@LoginUser userId: Long): ResponseEntity<ResultResponse> {
@@ -28,7 +29,13 @@ class UserController(
         @LoginUser userId: Long,
         @RequestBody request: UserNicknameUpdateRequest
     ): ResponseEntity<ResultResponse> {
-        val userNicknameUpdateResponse: UserNicknameUpdateResponse = userService.updateNickname(userId, request)
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_NICKNAME_UPDATE_SUCCESS, userNicknameUpdateResponse))
+        val userNicknameUpdateResponse: UserNicknameUpdateResponse =
+            userService.updateNickname(userId, request)
+        return ResponseEntity.ok(
+            ResultResponse.of(
+                ResultCode.USER_NICKNAME_UPDATE_SUCCESS,
+                userNicknameUpdateResponse
+            )
+        )
     }
 }

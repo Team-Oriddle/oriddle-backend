@@ -33,7 +33,6 @@ class QuizRoomMessageService(
         answerMessage: CheckAnswerMessage,
         score: Int
     ) {
-        // TODO: 다음 문제로 넘어가는 처리 구현
         val correctMessage = AnswerCorrectMessage(userId, answerMessage.answer, score)
         sendMessage("answer", quizRoomId, correctMessage)
     }

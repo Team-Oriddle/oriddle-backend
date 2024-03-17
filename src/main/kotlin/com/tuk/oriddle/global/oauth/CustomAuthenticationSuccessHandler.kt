@@ -20,8 +20,7 @@ class CustomAuthenticationSuccessHandler : AuthenticationSuccessHandler {
 
         if (redirectUrl != null) {
             response.sendRedirect(redirectUrl)
-        }
-        else {
+        } else {
             response.sendRedirect("/")
         }
     }

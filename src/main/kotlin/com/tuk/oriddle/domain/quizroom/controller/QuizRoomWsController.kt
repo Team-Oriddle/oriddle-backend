@@ -25,12 +25,11 @@ class QuizRoomWsController(private val quizRoomProgressService: QuizRoomProgress
 
     @MessageMapping("quiz-room/{quizRoomId}/chat")
     fun sendChatMessage(
-            @DestinationVariable("quizRoomId") quizRoomId: Long,
-            @Payload message: ChatReceiveMessage,
-            headerAccessor: SimpMessageHeaderAccessor
+        @DestinationVariable("quizRoomId") quizRoomId: Long,
+        @Payload message: ChatReceiveMessage,
+        headerAccessor: SimpMessageHeaderAccessor
     ) {
         val userId = (headerAccessor.sessionAttributes?.get("id") as String).toLong()
         quizRoomProgressService.sendChatMessage(quizRoomId, message, userId)
     }
-
 }

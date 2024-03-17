@@ -13,7 +13,7 @@ data class ParticipantInfoGetResponse(
             participant: Participant
         ): ParticipantInfoGetResponse {
             return ParticipantInfoGetResponse(
-                userId =  participant.user.id,
+                userId = participant.user.id,
                 position = participant.position,
                 nickname = participant.user.nickname,
                 isHost = participant.isHost

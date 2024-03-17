@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserQueryService(private val userRepository: UserRepository) {
     fun findById(userId: Long): User {
-        return userRepository.findById(userId)
-            .orElseThrow { UserNotFoundException() }
+        return userRepository.findById(userId).orElseThrow { UserNotFoundException() }
     }
 
     fun findByEmail(email: String): User? {
