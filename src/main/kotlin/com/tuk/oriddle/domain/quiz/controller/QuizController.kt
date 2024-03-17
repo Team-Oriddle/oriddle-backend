@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.quiz.controller
 
+import com.tuk.oriddle.domain.quiz.controller.doc.QuizApiDoc
 import com.tuk.oriddle.domain.quiz.dto.response.QuizInfoResponse
 import com.tuk.oriddle.domain.quiz.dto.response.QuizListResponse
 import com.tuk.oriddle.domain.quiz.service.QuizService
@@ -13,15 +14,15 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/quiz")
-class QuizController(private val quizService: QuizService) {
+class QuizController(private val quizService: QuizService) : QuizApiDoc {
     @GetMapping("/info/{quizId}")
-    fun getQuizInfo(@PathVariable quizId: Long): ResponseEntity<ResultResponse> {
+    override fun getQuizInfo(@PathVariable quizId: Long): ResponseEntity<ResultResponse> {
         val quizInfo: QuizInfoResponse = quizService.getQuizById(quizId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_GET_INFO_SUCCESS, quizInfo))
     }
 
     @GetMapping("/page/{page}")
-    fun getQuizzes(
+    override fun getQuizzes(
         @PathVariable page: Int,
         @RequestParam(defaultValue = "20") pageSize: Int
     ): ResponseEntity<ResultResponse> {
