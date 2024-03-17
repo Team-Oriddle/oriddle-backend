@@ -6,7 +6,6 @@ import com.tuk.oriddle.domain.user.dto.response.UserNicknameUpdateResponse
 import com.tuk.oriddle.domain.user.entity.Modifier
 import com.tuk.oriddle.domain.user.entity.User
 import jakarta.transaction.Transactional
-import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import kotlin.math.pow
 
@@ -25,8 +24,7 @@ class UserService(private val userQueryService: UserQueryService) {
     }
 
     @Transactional
-    fun updateNickname(oauth2User: OAuth2User, request: UserNicknameUpdateRequest): UserNicknameUpdateResponse {
-        val userId = oauth2User.attributes["userId"] as Long
+    fun updateNickname(userId: Long, request: UserNicknameUpdateRequest): UserNicknameUpdateResponse {
         val user = userQueryService.findById(userId)
         user.updateNickname(request.getUpdatedNickname())
         return UserNicknameUpdateResponse.of(user)
