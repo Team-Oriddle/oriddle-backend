@@ -27,6 +27,16 @@ data class ErrorResponse private constructor(
             businessCode = code.code,
             errorMessage = code.message
         )
+
+        fun fieldNullErrorResponse(fieldName: String): ErrorResponse = ErrorResponse(
+            businessCode = ErrorCode.INPUT_INVALID_VALUE.code,
+            errorMessage = "${fieldName}이(가) null 입니다."
+        )
+
+        fun fieldTypeErrorResponse(fieldName: String, type: String): ErrorResponse = ErrorResponse(
+            businessCode = ErrorCode.INPUT_INVALID_VALUE.code,
+            errorMessage = "${fieldName}의 type은 ${type}입니다."
+        )
     }
 
     data class FieldError(

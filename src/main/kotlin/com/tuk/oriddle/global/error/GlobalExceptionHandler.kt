@@ -1,10 +1,13 @@
 package com.tuk.oriddle.global.error
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.tuk.oriddle.global.error.exception.BusinessException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -44,5 +47,19 @@ class GlobalExceptionHandler {
         val response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, e.bindingResult)
         log.warn(e.message)
         return ResponseEntity.status(ErrorCode.INPUT_INVALID_VALUE.status).body(response)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    protected fun handleMethodArgumentNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+        val errorResponse = when (val cause = e.cause) {
+            is InvalidFormatException -> ErrorResponse.fieldTypeErrorResponse(
+                cause.path.joinToString() { it.fieldName }, cause.targetType.typeName
+            )
+
+            is MismatchedInputException -> ErrorResponse.fieldNullErrorResponse(cause.path.joinToString() { it.fieldName })
+            else -> ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE)
+        }
+        log.warn(errorResponse.errorMessage)
+        return ResponseEntity.status(ErrorCode.INPUT_INVALID_VALUE.status).body(errorResponse)
     }
 }
