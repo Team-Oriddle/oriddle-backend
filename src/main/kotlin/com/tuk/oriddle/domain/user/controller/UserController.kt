@@ -1,5 +1,6 @@
 package com.tuk.oriddle.domain.user.controller
 
+import com.tuk.oriddle.domain.user.controller.doc.UserApiDoc
 import com.tuk.oriddle.domain.user.dto.request.UserNicknameUpdateRequest
 import com.tuk.oriddle.domain.user.dto.response.UserInfoResponse
 import com.tuk.oriddle.domain.user.dto.response.UserNicknameUpdateResponse
@@ -15,17 +16,17 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/user")
 class UserController(
     private val userService: UserService
-) {
+) : UserApiDoc {
     @Secured("ROLE_USER")
     @GetMapping("/info")
-    fun getLoginUserInfo(@LoginUser userId: Long): ResponseEntity<ResultResponse> {
+    override fun getLoginUserInfo(@LoginUser userId: Long): ResponseEntity<ResultResponse> {
         val userInfoResponse: UserInfoResponse = userService.getLoginUserInfo(userId)
         return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_GET_SUCCESS, userInfoResponse))
     }
 
     @Secured("ROLE_USER")
     @PatchMapping("/nickname")
-    fun updateUserNickname(
+    override fun updateUserNickname(
         @LoginUser userId: Long,
         @RequestBody request: UserNicknameUpdateRequest
     ): ResponseEntity<ResultResponse> {
