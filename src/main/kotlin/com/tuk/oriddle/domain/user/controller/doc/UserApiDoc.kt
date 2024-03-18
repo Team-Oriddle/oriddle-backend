@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 @Tag(name = "User", description = "사용자 관련 API")
 interface UserApiDoc {
-    @Operation(summary = "로그인 사용자 정보 조회", security = [SecurityRequirement(name = "ROLE_USER")])
+    @Operation(summary = "로그인 유저 정보 조회", security = [SecurityRequirement(name = "ROLE_USER")])
     @ApiResponses(
         value = [
             ApiResponse(
@@ -31,7 +31,7 @@ interface UserApiDoc {
     )
     fun getLoginUserInfo(@LoginUser userId: Long): ResponseEntity<ResultResponse>
 
-    @Operation(summary = "사용자 닉네임 변경", security = [SecurityRequirement(name = "ROLE_USER")])
+    @Operation(summary = "유저 닉네임 수정", security = [SecurityRequirement(name = "ROLE_USER")])
     @ApiResponses(
         value = [
             ApiResponse(
