@@ -6,13 +6,12 @@ import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomProgressService
 import com.tuk.oriddle.domain.quizroom.service.QuizRoomService
+import com.tuk.oriddle.global.annotation.LoginUser
 import com.tuk.oriddle.global.result.ResultCode.*
 import com.tuk.oriddle.global.result.ResultResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -34,10 +33,8 @@ class QuizRoomController(
     @PostMapping
     fun createQuizRoom(
         @Valid @RequestBody request: QuizRoomCreateRequest,
-        @AuthenticationPrincipal oauth2User: OAuth2User
+        @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
-        // TODO: 인증 정보 가져오는 로직 수정
-        val userId = oauth2User.name.toLong()
         val response: QuizRoomCreateResponse = quizRoomService.createQuizRoom(request, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_CREATE_SUCCESS, response))
     }
@@ -46,10 +43,8 @@ class QuizRoomController(
     @PostMapping("/{room-id}/join")
     fun joinQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
-        @AuthenticationPrincipal oauth2User: OAuth2User
+        @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
-        // TODO: 인증 정보 가져오는 로직 수정
-        val userId = oauth2User.name.toLong()
         val response: QuizRoomJoinResponse = quizRoomService.joinQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_JOIN_SUCCESS, response))
     }
@@ -58,10 +53,8 @@ class QuizRoomController(
     @PostMapping("/{room-id}/leave")
     fun leaveQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
-        @AuthenticationPrincipal oauth2User: OAuth2User
+        @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
-        // TODO: 인증 정보 가져오는 로직 수정
-        val userId = oauth2User.name.toLong()
         quizRoomService.leaveQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_LEAVE_SUCCESS))
     }
@@ -70,9 +63,8 @@ class QuizRoomController(
     @PostMapping("/{room-id}/start")
     fun startQuizRoom(
         @PathVariable(name = "room-id") roomId: Long,
-        @AuthenticationPrincipal oauth2User: OAuth2User
+        @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
-        val userId = oauth2User.name.toLong()
         quizRoomProgressService.startQuizRoom(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_START_SUCCESS))
     }

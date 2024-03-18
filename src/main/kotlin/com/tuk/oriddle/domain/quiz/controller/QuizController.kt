@@ -25,8 +25,8 @@ class QuizController(private val quizService: QuizService) {
         @PathVariable page: Int,
         @RequestParam(defaultValue = "20") pageSize: Int
     ): ResponseEntity<ResultResponse> {
-        val pageReqeust: PageRequest = PageRequest.of(page, pageSize, Sort.by("id").descending());
-        val quizzes: QuizListResponse = quizService.getQuizzesWithPaging(pageReqeust)
+        val pageRequest: PageRequest = PageRequest.of(page, pageSize, Sort.by("id").descending());
+        val quizzes: QuizListResponse = quizService.getQuizzesWithPaging(pageRequest)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_PAGING_GET_SUCCESS, quizzes))
     }
 }

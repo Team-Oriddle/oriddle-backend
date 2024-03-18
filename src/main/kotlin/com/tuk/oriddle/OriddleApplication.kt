@@ -11,5 +11,5 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class OriddleApplication
 
 fun main(args: Array<String>) {
-	runApplication<OriddleApplication>(*args)
+    runApplication<OriddleApplication>(*args)
 }

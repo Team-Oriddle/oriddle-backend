@@ -16,6 +16,3 @@ data class QuizRoomCreateRequest(
         return QuizRoom(this.title, this.maxParticipant, quiz)
     }
 }
-
-
-
