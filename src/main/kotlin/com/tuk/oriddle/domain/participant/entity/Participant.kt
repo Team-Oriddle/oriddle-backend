@@ -16,8 +16,8 @@ class Participant(
     var quizRoom: QuizRoom = quizRoom
         private set
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     var user: User = user
         private set
 
