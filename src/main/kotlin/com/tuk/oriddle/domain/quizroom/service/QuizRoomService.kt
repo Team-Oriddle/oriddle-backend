@@ -88,6 +88,12 @@ class QuizRoomService(
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
         checkUserAlreadyParticipant(quizRoom.id, user.id)
         checkQuizRoomFull(quizRoom)
+        checkOtherQuizRoomParticipation(user.id)
+    }
+
+    private fun checkOtherQuizRoomParticipation(userId: Long) {
+        if (participantQueryService.checkUserHasParticipating(userId))
+            throw UserAlreadyInQuizRoomException()
     }
 
     private fun checkUserAlreadyParticipant(quizRoomId: Long, userId: Long) {
