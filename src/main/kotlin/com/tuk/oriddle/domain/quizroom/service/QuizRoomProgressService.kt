@@ -11,6 +11,7 @@ import com.tuk.oriddle.domain.quizroom.dto.message.ChatReceiveMessage
 import com.tuk.oriddle.domain.quizroom.dto.message.ChatSendMessage
 import com.tuk.oriddle.domain.quizroom.dto.message.CheckAnswerMessage
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoomProgressStatus
+import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.quizroom.scheduler.QuizRoomProgressScheduler
 import com.tuk.oriddle.domain.user.service.UserQueryService
 import org.springframework.stereotype.Service
@@ -29,6 +30,9 @@ class QuizRoomProgressService(
     private val userQueryService: UserQueryService
 ) {
     fun startQuizRoom(quizRoomId: Long, userId: Long) {
+        if (!participantQueryService.isUserAlreadyParticipant(quizRoomId, userId)) {
+            throw UserNotInQuizRoomException()
+        }
         val isNotHost =
             !participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId).isHost
         if (isNotHost) {

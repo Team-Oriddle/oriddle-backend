@@ -63,7 +63,7 @@ class QuizRoomService(
     fun joinQuizRoom(quizRoomId: Long, userId: Long): QuizRoomJoinResponse {
         // TODO: 쿼리 최적화 필요
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
-        val user: User = userQueryService.findById(userId)
+        val user = userQueryService.findById(userId)
         checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user, false)
         participantQueryService.save(participant)
