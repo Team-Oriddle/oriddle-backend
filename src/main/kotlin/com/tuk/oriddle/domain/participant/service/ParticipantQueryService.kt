@@ -22,6 +22,10 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
         return participantRepository.findByQuizRoomId(roomId)
     }
 
+    fun checkUserHasParticipating(userId: Long): Boolean {
+        return participantRepository.existsByUserId(userId)
+    }
+
     fun findByQuizRoomIdAndUserId(roomId: Long, userId: Long): Participant {
         return participantRepository.findByQuizRoomIdAndUserId(roomId, userId)
     }
