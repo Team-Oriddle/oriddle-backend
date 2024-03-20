@@ -2,7 +2,6 @@ package com.tuk.oriddle.domain.quizroom.service
 
 import com.tuk.oriddle.domain.participant.dto.ParticipantInfoGetResponse
 import com.tuk.oriddle.domain.participant.entity.Participant
-import com.tuk.oriddle.domain.participant.exception.ParticipantNotHostException
 import com.tuk.oriddle.domain.participant.service.ParticipantQueryService
 import com.tuk.oriddle.domain.quiz.entity.Quiz
 import com.tuk.oriddle.domain.quiz.service.QuizQueryService
@@ -13,6 +12,7 @@ import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
+import com.tuk.oriddle.domain.quizroom.exception.UserAlreadyInQuizRoomException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
@@ -27,7 +27,11 @@ class QuizRoomService(
     private val quizRoomMessageService: QuizRoomMessageService,
     private val quizRoomQueryService: QuizRoomQueryService,
 ) {
-    fun getQuizRoomInfo(quizRoomId: Long): QuizRoomInfoGetResponse {
+    fun getQuizRoomInfo(quizRoomId: Long, userId: Long): QuizRoomInfoGetResponse {
+        if (!participantQueryService.isUserAlreadyParticipant(quizRoomId, userId)) {
+            throw UserNotInQuizRoomException()
+        }
+        participantQueryService.findByQuizRoomIdAndUserId(quizRoomId, userId)
         val quizRoom: QuizRoom = quizRoomQueryService.findById(quizRoomId)
         val participants: List<Participant> = participantQueryService.findByQuizRoomId(quizRoomId)
         val participantsInfo: List<ParticipantInfoGetResponse> = participants
@@ -40,6 +44,7 @@ class QuizRoomService(
     fun createQuizRoom(
         request: QuizRoomCreateRequest, userId: Long
     ): QuizRoomCreateResponse {
+        checkOtherQuizRoomParticipation(userId)
         val quiz: Quiz = quizQueryService.findById(request.quizId)
         val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
@@ -59,7 +64,7 @@ class QuizRoomService(
     fun joinQuizRoom(quizRoomId: Long, userId: Long): QuizRoomJoinResponse {
         // TODO: 쿼리 최적화 필요
         val quizRoom = quizRoomQueryService.findById(quizRoomId)
-        val user: User = userQueryService.findById(userId)
+        val user = userQueryService.findById(userId)
         checkJoinQuizRoom(quizRoom, user)
         val participant = Participant(quizRoom, user, false)
         participantQueryService.save(participant)
@@ -84,6 +89,12 @@ class QuizRoomService(
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
         checkUserAlreadyParticipant(quizRoom.id, user.id)
         checkQuizRoomFull(quizRoom)
+        checkOtherQuizRoomParticipation(user.id)
+    }
+
+    private fun checkOtherQuizRoomParticipation(userId: Long) {
+        if (participantQueryService.checkUserHasParticipating(userId))
+            throw UserAlreadyInQuizRoomException()
     }
 
     private fun checkUserAlreadyParticipant(quizRoomId: Long, userId: Long) {

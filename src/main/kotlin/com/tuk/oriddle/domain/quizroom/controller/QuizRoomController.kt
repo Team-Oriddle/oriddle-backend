@@ -24,9 +24,10 @@ class QuizRoomController(
     @Secured("ROLE_USER")
     @GetMapping("/{room-id}")
     override fun getQuizRoomInfo(
-        @PathVariable(name = "room-id") roomId: Long
+        @PathVariable(name = "room-id") roomId: Long,
+        @LoginUser userId: Long
     ): ResponseEntity<ResultResponse> {
-        val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId)
+        val response: QuizRoomInfoGetResponse = quizRoomService.getQuizRoomInfo(roomId, userId)
         return ResponseEntity.ok(ResultResponse.of(QUIZ_ROOM_GET_INFO_SUCCESS, response))
     }
 

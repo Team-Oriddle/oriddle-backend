@@ -30,7 +30,8 @@ interface QuizRoomApiDoc {
             )]
         )]
     )
-    fun getQuizRoomInfo(@PathVariable(name = "room-id") roomId: Long): ResponseEntity<ResultResponse>
+    fun getQuizRoomInfo(@PathVariable(name = "room-id") roomId: Long, @LoginUser userId:  Long
+    ): ResponseEntity<ResultResponse>
 
     @Operation(summary = "퀴즈방 생성", security = [SecurityRequirement(name = "ROLE_USER")])
     @ApiResponses(

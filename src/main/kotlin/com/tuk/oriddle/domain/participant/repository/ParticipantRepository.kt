@@ -8,4 +8,5 @@ interface ParticipantRepository : JpaRepository<Participant, Long> {
     fun deleteByQuizRoomIdAndUserId(quizRoomId: Long, userId: Long)
     fun findByQuizRoomId(quizRoomId: Long): List<Participant>
     fun findByQuizRoomIdAndUserId(quizRoomId: Long, userId: Long): Participant
+    fun existsByUserId(userId: Long): Boolean
 }
