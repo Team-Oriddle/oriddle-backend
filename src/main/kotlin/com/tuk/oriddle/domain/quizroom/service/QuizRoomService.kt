@@ -44,6 +44,7 @@ class QuizRoomService(
     fun createQuizRoom(
         request: QuizRoomCreateRequest, userId: Long
     ): QuizRoomCreateResponse {
+        checkOtherQuizRoomParticipation(userId)
         val quiz: Quiz = quizQueryService.findById(request.quizId)
         val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
