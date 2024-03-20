@@ -15,7 +15,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - my-db:/var/lib/mysql
+      - my-test-db:/var/lib/mysql
 
   test-redis:
     image: redis:latest
