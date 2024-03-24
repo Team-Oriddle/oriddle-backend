@@ -93,7 +93,7 @@ class QuizRoomService(
     }
 
     private fun checkUserInOtherQuizRoom(userId: Long) {
-        if (participantQueryService.checkUserHasParticipating(userId))
+        if (participantQueryService.isUserParticipantAnyQuizRoom(userId))
             throw UserAlreadyInOtherQuizRoomException()
     }
 
