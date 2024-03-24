@@ -19,10 +19,10 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
 
     // Participant (PC)
     PARTICIPANT_NOT_FOUND(404, "PC0001", "참가자를 찾을 수 없습니다."),
-    QUIZ_ROOM_ALREADY_PARTICIPANT(409, "PC0002", "이미 현재 퀴즈방에 참가중입니다."),
+    USER_ALREADY_IN_CURRENT_QUIZ_ROOM(409, "PC0002", "이미 현재 퀴즈방에 참가중입니다."),
     USER_NOT_IN_QUIZ_ROOM(404, "PC0003", "유저가 퀴즈방에 없습니다."),
     PARTICIPANT_NOT_HOST(403, "PC0004", "참가자가 방장이 아닙니다."),
-    USER_ALREADY_IN_QUIZ_ROOM(409, "PC0005", "유저가 이미 다른 퀴즈방에 참가중입니다."),
+    USER_ALREADY_IN_OTHER_QUIZ_ROOM(409, "PC0005", "이미 다른 퀴즈방에 참가중입니다."),
 
     // Question (QS)
     QUESTION_NOT_FOUND_IN_REDIS(404, "QU0001", "질문이 Redis에 없습니다."),

@@ -10,9 +10,9 @@ import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomCreateResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomInfoGetResponse
 import com.tuk.oriddle.domain.quizroom.dto.response.QuizRoomJoinResponse
 import com.tuk.oriddle.domain.quizroom.entity.QuizRoom
-import com.tuk.oriddle.domain.quizroom.exception.QuizRoomAlreadyParticipantException
 import com.tuk.oriddle.domain.quizroom.exception.QuizRoomFullException
-import com.tuk.oriddle.domain.quizroom.exception.UserAlreadyInQuizRoomException
+import com.tuk.oriddle.domain.quizroom.exception.UserAlreadyInCurrentQuizRoomException
+import com.tuk.oriddle.domain.quizroom.exception.UserAlreadyInOtherQuizRoomException
 import com.tuk.oriddle.domain.quizroom.exception.UserNotInQuizRoomException
 import com.tuk.oriddle.domain.user.entity.User
 import com.tuk.oriddle.domain.user.service.UserQueryService
@@ -44,7 +44,7 @@ class QuizRoomService(
     fun createQuizRoom(
         request: QuizRoomCreateRequest, userId: Long
     ): QuizRoomCreateResponse {
-        checkOtherQuizRoomParticipation(userId)
+        checkUserInOtherQuizRoom(userId)
         val quiz: Quiz = quizQueryService.findById(request.quizId)
         val quizRoom = request.toEntity(quiz)
         val user: User = userQueryService.findById(userId)
@@ -87,19 +87,19 @@ class QuizRoomService(
     }
 
     private fun checkJoinQuizRoom(quizRoom: QuizRoom, user: User) {
-        checkUserAlreadyParticipant(quizRoom.id, user.id)
+        checkUserInCurrentQuizRoom(quizRoom.id, user.id)
         checkQuizRoomFull(quizRoom)
-        checkOtherQuizRoomParticipation(user.id)
+        checkUserInOtherQuizRoom(user.id)
     }
 
-    private fun checkOtherQuizRoomParticipation(userId: Long) {
+    private fun checkUserInOtherQuizRoom(userId: Long) {
         if (participantQueryService.checkUserHasParticipating(userId))
-            throw UserAlreadyInQuizRoomException()
+            throw UserAlreadyInOtherQuizRoomException()
     }
 
-    private fun checkUserAlreadyParticipant(quizRoomId: Long, userId: Long) {
+    private fun checkUserInCurrentQuizRoom(quizRoomId: Long, userId: Long) {
         if (participantQueryService.isUserAlreadyParticipant(quizRoomId, userId))
-            throw QuizRoomAlreadyParticipantException()
+            throw UserAlreadyInCurrentQuizRoomException()
     }
 
     private fun checkQuizRoomFull(quizRoom: QuizRoom) {
