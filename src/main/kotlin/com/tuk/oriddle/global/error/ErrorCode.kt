@@ -11,7 +11,7 @@ enum class ErrorCode(val status: Int, val code: String, val message: String) {
 
     // QuizRoom (QR)
     QUIZ_ROOM_NOT_FOUND(404, "QR0001", "퀴즈방을 찾을 수 없습니다."),
-    QUIZ_ROOM_IS_FULL(403, "QR0002", "퀴즈방이 꽉 차 있습니다."),
+    QUIZ_ROOM_FULL(403, "QR0002", "퀴즈방이 꽉 차 있습니다."),
     QUIZ_ROOM_STATUS_NOT_FOUND_IN_REDIS(404, "QR0003", "퀴즈방 진행 상태가 Redis에 없습니다."),
 
     // User (US)
