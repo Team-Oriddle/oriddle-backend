@@ -22,7 +22,7 @@ class ParticipantQueryService(private val participantRepository: ParticipantRepo
         return participantRepository.findByQuizRoomId(roomId)
     }
 
-    fun checkUserHasParticipating(userId: Long): Boolean {
+    fun isUserParticipantAnyQuizRoom(userId: Long): Boolean {
         return participantRepository.existsByUserId(userId)
     }
 

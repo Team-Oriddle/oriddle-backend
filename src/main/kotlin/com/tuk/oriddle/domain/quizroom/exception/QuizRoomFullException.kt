@@ -4,5 +4,5 @@ import com.tuk.oriddle.global.error.ErrorCode
 import com.tuk.oriddle.global.error.exception.BusinessException
 
 class QuizRoomFullException : BusinessException {
-    constructor() : super(ErrorCode.QUIZ_ROOM_IS_FULL)
+    constructor() : super(ErrorCode.QUIZ_ROOM_FULL)
 }
